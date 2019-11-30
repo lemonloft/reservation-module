@@ -5,15 +5,15 @@ Output: bulkReservations (array) */
 
 const moment = require('moment');
 
-var reservationGenerator = (loft_id) => {
+module.exports = (loft_id) => {
   let numReservations = Math.floor(Math.random() * 10) + 1;
   let numDays = numReservations * 2;
   let days = {};
   let reservations = [];
   for (let i = 0; i < numDays; i++) {
-    let day = Math.floor(Math.random() * 90) + 1;
+    let day = Math.ceil(Math.random() * 90);
     while (days[day] === true) {
-      day = Math.floor(Math.random() * 90) + 1;
+      day = Math.ceil(Math.random() * 90);
     }
     days[day] = true;
   }
@@ -26,11 +26,9 @@ var reservationGenerator = (loft_id) => {
   for (let j = 0; j < reservationDates.length; j += 2) {
     let reservation = {};
     reservation.loft_id = loft_id;
-    reservation.startDate = moment().add(reservationDates[j], 'days').calendar();
-    reservation.endDate = moment().add(reservationDates[j + 1], 'days').calendar();
+    reservation.startDate = moment().add(reservationDates[j], 'days').format('YYYY[-]MM[-]DD');
+    reservation.endDate = moment().add(reservationDates[j + 1], 'days').format('YYYY[-]MM[-]DD');
     reservations.push(reservation);
   }
   return reservations;
 }
-
-module.exports.reservationGenerator = reservationGenerator;

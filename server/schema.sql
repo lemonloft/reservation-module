@@ -1,4 +1,5 @@
 DROP DATABASE IF EXISTS LemonLoft;
+
 CREATE DATABASE LemonLoft;
 
 use LemonLoft;
@@ -6,10 +7,11 @@ use LemonLoft;
 CREATE TABLE `lofts` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `description` VARCHAR(500),
-  `pricePerNight` DECIMAL,
-  `cleaningFee` DECIMAL,
-  `serviceFee` DECIMAL,
-  `rating` DECIMAL
+  `pricePerNight` DECIMAL(5, 2),
+  `cleaningFee` DECIMAL(4, 2),
+  `serviceFee` DECIMAL(4, 2),
+  `rating` DECIMAL(3, 2),
+  `url` VARCHAR(100)
 );
 
 CREATE TABLE `reservations` (
@@ -21,5 +23,5 @@ CREATE TABLE `reservations` (
 );
 
 /*  Execute this file from the command line by typing:
- *    mysql -u root < server/schema.sql
+ *    mysql -u loftuser -p < server/schema.sql
  *  to create the database and the tables.*/
