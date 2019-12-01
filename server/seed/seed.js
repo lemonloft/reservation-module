@@ -5,7 +5,7 @@ const Reservation = require('../db').Reservation;
 
 const loftSynonyms = ['apartment', 'hostel', 'hotel', 'inn', 'lodge', 'motel', 'resort', 'shelter', 'abode', 'castle', 'palace', 'room', 'lodging', 'penthouse', 'studio', 'house', 'mansion'];
 
-const seedFn = () => {
+const seedFn = (() => {
   for (let i = 1; i <= 100; i++) {
     let lodging = {};
     let adjective = faker.commerce.productAdjective();
@@ -28,6 +28,4 @@ const seedFn = () => {
         console.log('There was an error in seeding: ', err);
       });
   }
-}
-
-seedFn();
+})();
