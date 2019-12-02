@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --watchAll",
     "build": "webpack -w -d",
-    "db:setup": "node server/seed/seed.js"
+    "db:setup": "node server/seed/seed.js",
+    "server": "nodemon --inspect server/router.js"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,8 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
     "moment": "^2.24.0",
     "mysql2": "^2.0.1",
     "nodemon": "^2.0.1",

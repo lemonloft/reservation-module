@@ -66,6 +66,36 @@ var Reservation = sequelize.define('reservations', {
   timestamps: false
 });
 
+module.exports.getAllLofts = (cb) => {
+  Loft.findAll()
+  .then(allLoftData => {
+    cb(null, allLoftData);
+  })
+  .catch(err => {
+    console.log('There was an error getting all loft data: ', err);
+  });
+};
+
+module.exports.getOneLoft = (url, cb) => {
+  sequelize.query(`SELECT * FROM lofts, reservations WHERE lofts.url = "${url}" AND lofts.id = reservations.loft_id`)
+  .then(data => {
+    cb(null, data);
+  })
+  .catch(err => {
+    console.log('There was an error getting loft data: ', err);
+  });
+}
+
+module.exports.addOneReservation = (reservation, cb) => {
+  Reservation.upsert(reservation)
+  .then(() => {
+    cb(null, 'SUCCESS');
+  })
+  .catch(err => {
+    console.log('There was an error upserting in sqlize: ', err);
+  });
+}
+
 module.exports.db = sequelize;
 module.exports.Loft = Loft;
 module.exports.Reservation = Reservation;
