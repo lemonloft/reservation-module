@@ -1,10 +1,15 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Reservation from './reservation.jsx';
+import Calendar from './calendar.jsx';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      reservations: [],
+      loftUrls: []
+    };
   }
   // componentDidMount() {
   //   fetch('/allLofts', {
@@ -44,7 +49,11 @@ class App extends React.Component {
   // }
   render() {
     return (
-      <div>Hello World!</div>
+      <div>
+        <div>Hello from App</div>
+        <Reservation />
+        <Calendar />
+      </div>
     )
   }
 }
