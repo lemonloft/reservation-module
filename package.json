@@ -1,0 +1,49 @@
+{
+  "name": "reservation-module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "build": "webpack -w -d",
+    "db:setup": "node server/seed/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyungjinlee93/reservation-module.git"
+  },
+  "jest": {
+    "setupFiles": [
+      "./tests/setupTests.js"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hyungjinlee93/reservation-module/issues"
+  },
+  "homepage": "https://github.com/hyungjinlee93/reservation-module#readme",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "eslint": "^6.7.2",
+    "faker": "^4.1.0",
+    "jest": "^24.9.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "moment": "^2.24.0",
+    "mysql2": "^2.0.1",
+    "nodemon": "^2.0.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "sequelize": "^5.21.2"
+  }
+}
