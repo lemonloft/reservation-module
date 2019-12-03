@@ -77,7 +77,7 @@ module.exports.getAllLofts = (cb) => {
 };
 
 module.exports.getOneLoft = (url, cb) => {
-  sequelize.query(`SELECT * FROM lofts, reservations WHERE lofts.url = "${url}" AND lofts.id = reservations.loft_id`)
+  sequelize.query(`SELECT reservations.startDate, reservations.endDate FROM lofts, reservations WHERE lofts.url = "${url}" AND lofts.id = reservations.loft_id`)
   .then(data => {
     cb(null, data);
   })
