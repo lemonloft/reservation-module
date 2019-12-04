@@ -13,11 +13,12 @@ const seedFn = (() => {
     let city = faker.address.city();
     lodging.id = i;
     lodging.description = `${adjective} ${loftSynonym} in ${city}`;
-    lodging.pricePerNight = (Math.ceil(Math.random() * (20000 - 2000) + 2000)) / 100;
+    lodging.pricePerNight = Math.ceil(Math.random() * (200 - 20) + 20);
     lodging.cleaningFee = (Math.ceil(Math.random() * (3000 - 500) + 500)) / 100;
     lodging.serviceFee = (Math.ceil(Math.random() * (3000 - 500) + 500)) / 100;
     lodging.rating = (Math.ceil(Math.random() * (500 - 100) + 100)) / 100;
     lodging.url = '' + adjective + loftSynonym + i;
+    lodging.reviewCount = Math.ceil(Math.random() * (500 - 5) + 5);
     let reservations = reservationsGenerator(i);
     Loft.create(lodging)
       .then(() => {

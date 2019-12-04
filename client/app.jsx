@@ -12,50 +12,67 @@ class App extends React.Component {
       pricePerNight: NaN,
       cleaningFee: NaN,
       serviceFee: NaN,
-      reservations: [/*Array of objects of two dates representing reservations*/],
-      loftUrls: [/*Array of strings of urls to click on to see other lofts*/]
+      reviewCount: NaN,
+      reservations: [],
+      loftUrls: [],
+      calendarView: ''
     };
+    this.clickHandler = this.clickHandler.bind(this);
   }
   componentDidMount() {
-    if(!this.state.reservations.length){
+    if (!this.state.reservations.length) {
       fetch('/allLofts', {
         method: 'GET'
       })
         .then(response => response.json())
         .then((data) => {
-          let index = Math.floor(Math.random()*100);
+          let index = Math.floor(Math.random() * 100);
           this.state.description = data[index].description;
-          this.state.rating = data[index].rating;
-          this.state.pricePerNight = data[index].pricePerNight;
-          this.state.cleaningFee = data[index].cleaningFee;
-          this.state.serviceFee = data[index].serviceFee;
-          for (const element of data){
+          this.state.rating = Number(data[index].rating);
+          this.state.pricePerNight = Number(data[index].pricePerNight);
+          this.state.cleaningFee = Number(data[index].cleaningFee);
+          this.state.serviceFee = Number(data[index].serviceFee);
+          this.state.reviewCount = data[index].reviewCount;
+          for (const element of data) {
             this.state.loftUrls.push(element.url);
           }
-          fetch(`/reservations?q=${data[index].url}`,{
-            method:'GET'
+          fetch(`/reservations?q=${data[index].url}`, {
+            method: 'GET'
           })
-          .then(response => response.json())
-          .then((resData) => {
-            this.state.reservations = resData.slice();
-            this.setState((state) => (state));
-          })
-          .catch(err => {
-            console.log('err: ', err);
-          })
+            .then(response => response.json())
+            .then((resData) => {
+              this.state.reservations = resData.slice();
+              this.setState((state) => (state));
+            })
+            .catch(err => {
+              console.log('err: ', err);
+            })
         })
         .catch(err => {
           console.log('err: ', err)
         });
     }
   }
-  // componentDidMount() {
-  //   fetch('/allLofts', {
-  //     method: 'GET'
-  //   })
-  //     .then(response => response.json())
-  //     .then((data) => {
-  //       console.log(data);
+
+  clickHandler(e) {
+    if (e.target.placeholder || e.target.innerText === '→') {
+      if (e.target.innerText === '→') {
+        return;
+      } else if (e.target.placeholder === 'Check-in') {
+        this.setState({ calendarView: 'checkIn' });
+      } else {
+        this.setState({ calendarView: 'checkOut' });
+      }
+    } else if (document.getElementById('calendar-div') !== null && !document.getElementById('calendar-div').contains(e.target)) {
+      this.setState({ calendarView: '' });
+    }
+    // } else if (document.getElementById('checkIn') !== null || e.target.placeholder === 'Check-in') {
+    //   this.setState({ calendarView: 'checkIn' });
+    // } else if (document.getElementById('checkOut') !== null || e.target.placeholder === 'Checkout') {
+    //   this.setState({ calendarView: 'checkOut' });
+    // }
+  }
+
   //       let sampleReservation = {
   //         loft_id: 1,
   //         startDate: '2019-12-24',
@@ -73,27 +90,30 @@ class App extends React.Component {
   //           method: 'GET'
   //         })
   //         .then(response => response.json())
-  //         .then((datum) => {
-  //           console.log(datum);
-  //         })
-  //         .catch(err => {
-  //           console.log('err: ', err);
-  //         });
-  //       })
-  //     })
-  //     .catch(err => {
-  //       console.log('err: ', err)
-  //     });
-  // }
   render() {
-    return (
-      <div>
-        <div>Description: {this.state.description}</div>
-        <Reservation />
-        <Calendar />
-        <div>Suggested Locations: {this.state.loftUrls.slice(0,10)}</div>
-      </div>
-    )
+    if (this.state.reservations.length === 0) {
+      return (
+        <div></div>
+      )
+    }
+    else {
+      let info = {
+        rating: this.state.rating,
+        pricePerNight: this.state.pricePerNight,
+        cleaningFee: this.state.cleaningFee,
+        serviceFee: this.state.serviceFee,
+        reservations: this.state.reservations,
+        reviewCount: this.state.reviewCount
+      };
+      return (
+        <div onClick={this.clickHandler}>
+          <div>Description: {this.state.description}</div>
+          <Reservation info={info} calendarView={this.state.calendarView} />
+          {/* <Calendar reservations={this.state.reservations} /> */}
+          <div>Suggested Locations: {this.state.loftUrls.slice(0, 10)}</div>
+        </div>
+      )
+    }
   }
 }
 

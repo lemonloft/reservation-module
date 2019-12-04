@@ -5,7 +5,9 @@ class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      month: moment()
+      month: moment(),
+      pickedCheckOut: false,
+      pickedCheckIn: false
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
@@ -13,14 +15,12 @@ class Calendar extends React.Component {
 
   previousMonth() {
     this.state.month.subtract(1, 'M');
-    this.setState((state) => (state));
+    this.setState({ month: this.state.month });
   }
-
   nextMonth() {
     this.state.month.add(1, 'M');
-    this.setState((state) => (state));
+    this.setState({ month: this.state.month });
   }
-
   renderMonth() {
     let tableDays = [
       <td key="Su" className="table-day">Su</td>,
@@ -72,7 +72,6 @@ class Calendar extends React.Component {
         return null;
       }
     }
-
     if (Number(endDate) > 28 || startDay != 'Su') {
       week5 = week.slice();
     }
@@ -82,111 +81,256 @@ class Calendar extends React.Component {
     if (Number(endDate) === 31 && (startDay === 'Fr' || startDay === 'Sa')) {
       week6 = week.slice();
     }
-    if (startDay === 'Su') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 7) {
-          week1[i - 1] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 14) {
-          week2[i - 8] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 21) {
-          week3[i - 15] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 28) {
-          week4[i - 22] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 31) {
-          week5[i - 29] = <td key={i} className="table-date unavailable">{i}</td>;
+
+    if (this.props.view === 'checkIn') {
+      let tdHelper = (i) => {
+        let viewDate = this.state.month.format('YYYY-MM');
+        viewDate += '-' + i;
+        let checkDateAvailable = (date) => {
+          let checkedDate = Date.parse(date);
+          let dayAfter = checkedDate + 86400000;
+          for (const element of this.props.reservations) {
+            if ((Date.parse(element.startDate) <= checkedDate && Date.parse(element.endDate) >= checkedDate) || (Date.parse(element.startDate) <= dayAfter && Date.parse(element.endDate) >= dayAfter)) {
+              return false;
+            }
+          }
+          return true;
+        }
+        if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
+          return (<td key={i} className="table-date unavailable">{i}</td>);
+        } else {
+          return (<td key={i} className="table-date available">{i}</td>)
         }
       }
-    } else if (startDay === 'Mo') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 6) {
-          week1[i] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 13) {
-          week2[i - 7] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 20) {
-          week3[i - 14] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 27) {
-          week4[i - 21] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 34) {
-          week5[i - 28] = <td key={i} className="table-date unavailable">{i}</td>;
+      if (startDay === 'Su') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 7) {
+            week1[i - 1] = tdHelper(i);
+          } else if (i <= 14) {
+            week2[i - 8] = tdHelper(i);
+          } else if (i <= 21) {
+            week3[i - 15] = tdHelper(i);
+          } else if (i <= 28) {
+            week4[i - 22] = tdHelper(i);
+          } else if (i <= 31) {
+            week5[i - 29] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Mo') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 6) {
+            week1[i] = tdHelper(i);
+          } else if (i <= 13) {
+            week2[i - 7] = tdHelper(i);
+          } else if (i <= 20) {
+            week3[i - 14] = tdHelper(i);
+          } else if (i <= 27) {
+            week4[i - 21] = tdHelper(i);
+          } else if (i <= 34) {
+            week5[i - 28] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Tu') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 5) {
+            week1[i + 1] = tdHelper(i);
+          } else if (i <= 12) {
+            week2[i - 6] = tdHelper(i);
+          } else if (i <= 19) {
+            week3[i - 13] = tdHelper(i);
+          } else if (i <= 26) {
+            week4[i - 20] = tdHelper(i);
+          } else if (i <= 33) {
+            week5[i - 27] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'We') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 4) {
+            week1[i + 2] = tdHelper(i);
+          } else if (i <= 11) {
+            week2[i - 5] = tdHelper(i);
+          } else if (i <= 18) {
+            week3[i - 12] = tdHelper(i);
+          } else if (i <= 25) {
+            week4[i - 19] = tdHelper(i);
+          } else if (i <= 32) {
+            week5[i - 26] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Th') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 3) {
+            week1[i + 3] = tdHelper(i);
+          } else if (i <= 10) {
+            week2[i - 4] = tdHelper(i);
+          } else if (i <= 17) {
+            week3[i - 11] = tdHelper(i);
+          } else if (i <= 24) {
+            week4[i - 18] = tdHelper(i);
+          } else if (i <= 31) {
+            week5[i - 25] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Fr') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 2) {
+            week1[i + 4] = tdHelper(i);
+          } else if (i <= 9) {
+            week2[i - 3] = tdHelper(i);
+          } else if (i <= 16) {
+            week3[i - 10] = tdHelper(i);
+          } else if (i <= 23) {
+            week4[i - 17] = tdHelper(i);
+          } else if (i <= 30) {
+            week5[i - 24] = tdHelper(i);
+          } else if (i <= 37) {
+            week6[i - 31] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Sa') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 1) {
+            week1[i + 5] = tdHelper(i);
+          } else if (i <= 8) {
+            week2[i - 2] = tdHelper(i);
+          } else if (i <= 15) {
+            week3[i - 9] = tdHelper(i);
+          } else if (i <= 22) {
+            week4[i - 16] = tdHelper(i);
+          } else if (i <= 29) {
+            week5[i - 23] = tdHelper(i);
+          } else if (i <= 36) {
+            week6[i - 30] = tdHelper(i);
+          }
         }
       }
-    } else if (startDay === 'Tu') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 5) {
-          week1[i + 1] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 12) {
-          week2[i - 6] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 19) {
-          week3[i - 13] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 26) {
-          week4[i - 20] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 33) {
-          week5[i - 27] = <td key={i} className="table-date unavailable">{i}</td>;
+    } else {
+      let tdHelper = (i) => {
+        let viewDate = this.state.month.format('YYYY-MM');
+        viewDate += '-' + i;
+        let checkDateAvailable = (date) => {
+          let checkedDate = Date.parse(date);
+          let dayBefore = checkedDate - 86400000;
+          for (const element of this.props.reservations) {
+            if ((Date.parse(element.startDate) <= checkedDate && Date.parse(element.endDate) >= checkedDate) || (Date.parse(element.startDate) <= dayBefore && Date.parse(element.endDate) >= dayBefore)) {
+              return false;
+            }
+          }
+          return true;
+        }
+        if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
+          return (<td key={i} className="table-date unavailable">{i}</td>);
+        } else {
+          return (<td key={i} className="table-date available">{i}</td>)
         }
       }
-    } else if (startDay === 'We') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 4) {
-          week1[i + 2] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 11) {
-          week2[i - 5] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 18) {
-          week3[i - 12] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 25) {
-          week4[i - 19] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 32) {
-          week5[i - 26] = <td key={i} className="table-date unavailable">{i}</td>;
+      if (startDay === 'Su') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 7) {
+            week1[i - 1] = tdHelper(i);
+          } else if (i <= 14) {
+            week2[i - 8] = tdHelper(i);
+          } else if (i <= 21) {
+            week3[i - 15] = tdHelper(i);
+          } else if (i <= 28) {
+            week4[i - 22] = tdHelper(i);
+          } else if (i <= 31) {
+            week5[i - 29] = tdHelper(i);
+          }
         }
-      }
-    } else if (startDay === 'Th') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 3) {
-          week1[i + 3] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 10) {
-          week2[i - 4] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 17) {
-          week3[i - 11] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 24) {
-          week4[i - 18] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 31) {
-          week5[i - 25] = <td key={i} className="table-date unavailable">{i}</td>;
+      } else if (startDay === 'Mo') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 6) {
+            week1[i] = tdHelper(i);
+          } else if (i <= 13) {
+            week2[i - 7] = tdHelper(i);
+          } else if (i <= 20) {
+            week3[i - 14] = tdHelper(i);
+          } else if (i <= 27) {
+            week4[i - 21] = tdHelper(i);
+          } else if (i <= 34) {
+            week5[i - 28] = tdHelper(i);
+          }
         }
-      }
-    } else if (startDay === 'Fr') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 2) {
-          week1[i + 4] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 9) {
-          week2[i - 3] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 16) {
-          week3[i - 10] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 23) {
-          week4[i - 17] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 30) {
-          week5[i - 24] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 37) {
-          week6[i - 31] = <td key={i} className="table-date unavailable">{i}</td>;
+      } else if (startDay === 'Tu') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 5) {
+            week1[i + 1] = tdHelper(i);
+          } else if (i <= 12) {
+            week2[i - 6] = tdHelper(i);
+          } else if (i <= 19) {
+            week3[i - 13] = tdHelper(i);
+          } else if (i <= 26) {
+            week4[i - 20] = tdHelper(i);
+          } else if (i <= 33) {
+            week5[i - 27] = tdHelper(i);
+          }
         }
-      }
-    } else if (startDay === 'Sa') {
-      for (let i = 1; i <= Number(endDate); i++) {
-        if (i <= 1) {
-          week1[i + 5] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 8) {
-          week2[i - 2] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 15) {
-          week3[i - 9] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 22) {
-          week4[i - 16] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 29) {
-          week5[i - 23] = <td key={i} className="table-date unavailable">{i}</td>;
-        } else if (i <= 36) {
-          week6[i - 30] = <td key={i} className="table-date unavailable">{i}</td>;
+      } else if (startDay === 'We') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 4) {
+            week1[i + 2] = tdHelper(i);
+          } else if (i <= 11) {
+            week2[i - 5] = tdHelper(i);
+          } else if (i <= 18) {
+            week3[i - 12] = tdHelper(i);
+          } else if (i <= 25) {
+            week4[i - 19] = tdHelper(i);
+          } else if (i <= 32) {
+            week5[i - 26] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Th') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 3) {
+            week1[i + 3] = tdHelper(i);
+          } else if (i <= 10) {
+            week2[i - 4] = tdHelper(i);
+          } else if (i <= 17) {
+            week3[i - 11] = tdHelper(i);
+          } else if (i <= 24) {
+            week4[i - 18] = tdHelper(i);
+          } else if (i <= 31) {
+            week5[i - 25] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Fr') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 2) {
+            week1[i + 4] = tdHelper(i);
+          } else if (i <= 9) {
+            week2[i - 3] = tdHelper(i);
+          } else if (i <= 16) {
+            week3[i - 10] = tdHelper(i);
+          } else if (i <= 23) {
+            week4[i - 17] = tdHelper(i);
+          } else if (i <= 30) {
+            week5[i - 24] = tdHelper(i);
+          } else if (i <= 37) {
+            week6[i - 31] = tdHelper(i);
+          }
+        }
+      } else if (startDay === 'Sa') {
+        for (let i = 1; i <= Number(endDate); i++) {
+          if (i <= 1) {
+            week1[i + 5] = tdHelper(i);
+          } else if (i <= 8) {
+            week2[i - 2] = tdHelper(i);
+          } else if (i <= 15) {
+            week3[i - 9] = tdHelper(i);
+          } else if (i <= 22) {
+            week4[i - 16] = tdHelper(i);
+          } else if (i <= 29) {
+            week5[i - 23] = tdHelper(i);
+          } else if (i <= 36) {
+            week6[i - 30] = tdHelper(i);
+          }
         }
       }
     }
     return (
-      <tbody>
+      <tbody id={this.props.view}>
         <tr className="table-day-noborder">
           {tableDays}
         </tr>
@@ -210,7 +354,7 @@ class Calendar extends React.Component {
 
   render() {
     return (
-      <div>
+      <div id="calendar-div" className="calendar-block">
         <table>
           <thead>
             <tr>
