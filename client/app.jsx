@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Calendar from './calendar.jsx';
-import { thisExpression } from '@babel/types';
 
 class App extends React.Component {
   constructor(props) {

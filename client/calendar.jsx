@@ -61,23 +61,23 @@ class Calendar extends React.Component {
     let week5helper = () => {
       if (week5.length > 0) {
         return (
-          <tr className="table-date-border">
+          <tr className="table-date-border week5">
             {week5}
           </tr>
         );
       } else {
-        return null;
+        return undefined;
       }
     }
     let week6helper = () => {
       if (week6.length > 0) {
         return (
-          <tr className="table-date-border">
+          <tr className="table-date-border week6">
             {week6}
           </tr>
         );
       } else {
-        return null;
+        return undefined;
       }
     }
     if (Number(endDate) > 28 || startDay != 'Su') {
@@ -382,16 +382,16 @@ class Calendar extends React.Component {
         <tr className="table-day-noborder">
           {tableDays}
         </tr>
-        <tr className="table-date-border">
+        <tr className="table-date-border week1">
           {week1}
         </tr>
-        <tr className="table-date-border">
+        <tr className="table-date-border week2">
           {week2}
         </tr>
-        <tr className="table-date-border">
+        <tr className="table-date-border week3">
           {week3}
         </tr>
-        <tr className="table-date-border">
+        <tr className="table-date-border week4">
           {week4}
         </tr>
         {week5helper()}
