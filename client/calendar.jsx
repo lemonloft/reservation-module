@@ -5,9 +5,7 @@ class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      month: moment(),
-      pickedCheckOut: false,
-      pickedCheckIn: false
+      month: moment()
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
@@ -21,6 +19,16 @@ class Calendar extends React.Component {
     this.state.month.add(1, 'M');
     this.setState({ month: this.state.month });
   }
+  clickDate(e, date) {
+    let whichDate = {};
+    if (e.target.className.includes('checkInDate')) {
+      whichDate.checkInDate = date;
+    } else {
+      whichDate.checkOutDate = date;
+    }
+    this.props.datePicker(whichDate);
+  }
+
   renderMonth() {
     let tableDays = [
       <td key="Su" className="table-day">Su</td>,
@@ -99,7 +107,7 @@ class Calendar extends React.Component {
         if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
           return (<td key={i} className="table-date unavailable">{i}</td>);
         } else {
-          return (<td key={i} className="table-date available">{i}</td>)
+          return (<td key={i} className="table-date available checkInDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
         }
       }
       if (startDay === 'Su') {
@@ -206,23 +214,63 @@ class Calendar extends React.Component {
         }
       }
     } else {
+      let checkOutRange = [];
+      if (this.props.checkInDate.length > 0) {
+        let reservedDates = this.props.reservations.slice();
+        reservedDates.sort((a, b) => {
+          return Date.parse(a.startDate) - Date.parse(b.startDate);
+        });
+        for (let i = 0; i < reservedDates.length - 1; i++) {
+          if (i === 0 && Date.parse(this.props.checkInDate) < Date.parse(reservedDates[i].startDate)) {
+            let pushedDate = Date.parse(this.props.checkInDate) + 86400000;
+            while (pushedDate < Date.parse(reservedDates[i].startDate)) {
+              checkOutRange.push(pushedDate);
+              pushedDate += 86400000;
+            }
+            break;
+          }
+          if (Date.parse(reservedDates[i].endDate) < Date.parse(this.props.checkInDate) && Date.parse(reservedDates[i + 1].startDate) > Date.parse(this.props.checkInDate)) {
+            let pushedDate = Date.parse(this.props.checkInDate) + 86400000;
+            while (pushedDate < Date.parse(reservedDates[i + 1].startDate)) {
+              checkOutRange.push(pushedDate);
+              pushedDate += 86400000;
+            }
+            break;
+          }
+        }
+      }
       let tdHelper = (i) => {
         let viewDate = this.state.month.format('YYYY-MM');
         viewDate += '-' + i;
         let checkDateAvailable = (date) => {
           let checkedDate = Date.parse(date);
           let dayBefore = checkedDate - 86400000;
-          for (const element of this.props.reservations) {
-            if ((Date.parse(element.startDate) <= checkedDate && Date.parse(element.endDate) >= checkedDate) || (Date.parse(element.startDate) <= dayBefore && Date.parse(element.endDate) >= dayBefore)) {
+          if (this.props.checkInDate.length > 0) {
+            if (checkedDate <= Date.parse(this.props.checkInDate)) {
               return false;
+            }
+            if (checkOutRange.length === 0) {
+              return true;
+            }
+            for (let element of checkOutRange) {
+              if (element === checkedDate) {
+                return true;
+              }
+            }
+            return false;
+          } else {
+            for (const element of this.props.reservations) {
+              if ((Date.parse(element.startDate) <= checkedDate && Date.parse(element.endDate) >= checkedDate) || (Date.parse(element.startDate) <= dayBefore && Date.parse(element.endDate) >= dayBefore)) {
+                return false;
+              }
             }
           }
           return true;
         }
-        if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
+        if (Date.parse(viewDate) < Date.parse(Date()) + 86400000 || !checkDateAvailable(viewDate)) {
           return (<td key={i} className="table-date unavailable">{i}</td>);
         } else {
-          return (<td key={i} className="table-date available">{i}</td>)
+          return (<td key={i} className="table-date available checkOutDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
         }
       }
       if (startDay === 'Su') {

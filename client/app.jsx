@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Reservation from './reservation.jsx';
 import Calendar from './calendar.jsx';
+import { thisExpression } from '@babel/types';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,9 +15,12 @@ class App extends React.Component {
       reviewCount: NaN,
       reservations: [],
       loftUrls: [],
-      calendarView: ''
+      view: '',
+      checkInDate: '',
+      checkOutDate: ''
     };
     this.clickHandler = this.clickHandler.bind(this);
+    this.datePicker = this.datePicker.bind(this);
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
@@ -53,24 +56,57 @@ class App extends React.Component {
         });
     }
   }
-
   clickHandler(e) {
     if (e.target.placeholder || e.target.innerText === '→') {
       if (e.target.innerText === '→') {
         return;
       } else if (e.target.placeholder === 'Check-in') {
-        this.setState({ calendarView: 'checkIn' });
+        this.setState({ view: 'checkIn' });
       } else {
-        this.setState({ calendarView: 'checkOut' });
+        this.setState({ view: 'checkOut' });
       }
     } else if (document.getElementById('calendar-div') !== null && !document.getElementById('calendar-div').contains(e.target)) {
-      this.setState({ calendarView: '' });
+      this.setState({ view: '' });
     }
-    // } else if (document.getElementById('checkIn') !== null || e.target.placeholder === 'Check-in') {
-    //   this.setState({ calendarView: 'checkIn' });
-    // } else if (document.getElementById('checkOut') !== null || e.target.placeholder === 'Checkout') {
-    //   this.setState({ calendarView: 'checkOut' });
-    // }
+  }
+  datePicker(date) {
+    if (date.checkInDate) {
+      if(this.state.checkInDate.length > 0 || Date.parse(date.checkInDate) >= Date.parse(this.state.checkOutDate)){
+        this.state.checkOutDate = '';
+      }
+      this.setState({ checkInDate: date.checkInDate });
+      if (this.state.checkOutDate.length === 0) {
+        this.setState({ view: 'checkOut' });
+      } else {
+        this.setState({ view: '' });
+      }
+    } else {
+      this.setState({ checkOutDate: date.checkOutDate });
+      if (this.state.checkInDate.length === 0) {
+        this.setState({ view: 'checkIn' });
+      } else {
+        this.setState({ view: '' });
+      }
+    }
+  }
+  renderCalendar() {
+    if (this.state.view === '') {
+      return undefined;
+    } else if (this.state.view === 'checkIn') {
+      return (
+        <div>
+          View check in:
+          <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          View check out:
+          <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
+        </div>
+      );
+    }
   }
 
   //       let sampleReservation = {
@@ -108,8 +144,11 @@ class App extends React.Component {
       return (
         <div onClick={this.clickHandler}>
           <div>Description: {this.state.description}</div>
-          <Reservation info={info} calendarView={this.state.calendarView} />
-          {/* <Calendar reservations={this.state.reservations} /> */}
+          <div>${this.state.pricePerNight} per night<br />&#9733; {this.state.rating} ({this.state.reviewCount} reviews)</div>
+          <input id="checkin" placeholder="Check-in" readOnly value={this.state.checkInDate} />
+          <span>→</span>
+          <input id="checkout" placeholder="Checkout" readOnly value={this.state.checkOutDate} />
+          {this.renderCalendar()}
           <div>Suggested Locations: {this.state.loftUrls.slice(0, 10)}</div>
         </div>
       )
