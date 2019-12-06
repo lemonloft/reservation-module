@@ -42,6 +42,9 @@ var Loft = sequelize.define('lofts', {
   },
   'url': {
     type: Sequelize.STRING(100)
+  },
+  'reviewCount': {
+    type: Sequelize.INTEGER
   }
 }, {
   timestamps: false

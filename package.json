@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --verbose",
+    "test": "jest --watchAll --verbose --collectCoverage",
     "build": "webpack -w -d",
     "db:setup": "node server/seed/seed.js",
     "server": "nodemon --inspect server/router.js"
@@ -36,6 +36,7 @@
     "eslint": "^6.7.2",
     "faker": "^4.1.0",
     "jest": "^24.9.0",
+    "sinon": "^7.5.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },

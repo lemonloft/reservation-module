@@ -11,7 +11,8 @@ CREATE TABLE `lofts` (
   `cleaningFee` DECIMAL(4, 2),
   `serviceFee` DECIMAL(4, 2),
   `rating` DECIMAL(3, 2),
-  `url` VARCHAR(100)
+  `url` VARCHAR(100),
+  `reviewCount` INT
 );
 
 CREATE TABLE `reservations` (
