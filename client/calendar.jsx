@@ -39,7 +39,11 @@ class Calendar extends React.Component {
       <td key="Fr" className="table-day">Fr</td>,
       <td key="Sa" className="table-day">Sa</td>
     ];
-    let week = [
+
+    let startDay = this.state.month.startOf('M').format('dd');
+    let endDate = this.state.month.endOf('M').format('DD');
+
+    let week1 = [
       <td key="blankDate1" className="table-date"></td>,
       <td key="blankDate2" className="table-date"></td>,
       <td key="blankDate3" className="table-date"></td>,
@@ -48,14 +52,9 @@ class Calendar extends React.Component {
       <td key="blankDate6" className="table-date"></td>,
       <td key="blankDate7" className="table-date"></td>
     ];
-
-    let startDay = this.state.month.startOf('M').format('dd');
-    let endDate = this.state.month.endOf('M').format('DD');
-
-    let week1 = week.slice();
-    let week2 = week.slice();
-    let week3 = week.slice();
-    let week4 = week.slice();
+    let week2 = [];
+    let week3 = [];
+    let week4 = [];
     let week5 = [];
     let week6 = [];
     let week5helper = () => {
@@ -80,18 +79,24 @@ class Calendar extends React.Component {
         return undefined;
       }
     }
-    if (Number(endDate) > 28 || startDay != 'Su') {
-      week5 = week.slice();
-    }
-    if (Number(endDate) === 30 && startDay === 'Sa') {
-      week6 = week.slice();
-    }
-    if (Number(endDate) === 31 && (startDay === 'Fr' || startDay === 'Sa')) {
-      week6 = week.slice();
-    }
 
     if (this.props.view === 'checkIn') {
-      let tdHelper = (i) => {
+      let tdHelper = (i, startDay) => {
+        let dateElement;
+        let dayModifier = 0;
+        if (startDay === 'Mo') {
+          dayModifier = 1;
+        } else if (startDay === 'Tu') {
+          dayModifier = 2;
+        } else if (startDay === 'We') {
+          dayModifier = 3;
+        } else if (startDay === 'Th') {
+          dayModifier = 4;
+        } else if (startDay === 'Fr') {
+          dayModifier = 5;
+        } else if (startDay === 'Sa') {
+          dayModifier = 6;
+        }
         let viewDate = this.state.month.format('YYYY-MM');
         viewDate += '-' + i;
         let checkDateAvailable = (date) => {
@@ -105,113 +110,26 @@ class Calendar extends React.Component {
           return true;
         }
         if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
-          return (<td key={i} className="table-date unavailable">{i}</td>);
+          dateElement = (<td key={i} className="table-date unavailable">{i}</td>);
         } else {
-          return (<td key={i} className="table-date available checkInDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+          dateElement = (<td key={i} className="table-date available checkInDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+        }
+        if (i <= 7 - dayModifier) {
+          week1[dayModifier + i - 1] = dateElement;
+        } else if (i <= 14 - dayModifier) {
+          week2[dayModifier + i - 8] = dateElement;
+        } else if (i <= 21 - dayModifier) {
+          week3[dayModifier + i - 15] = dateElement;
+        } else if (i <= 28 - dayModifier) {
+          week4[dayModifier + i - 22] = dateElement;
+        } else if (i <= 35 - dayModifier) {
+          week5[dayModifier + i - 29] = dateElement;
+        } else if (i <= 42 - dayModifier) {
+          week6[dayModifier + i - 36] = dateElement;
         }
       }
-      if (startDay === 'Su') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 7) {
-            week1[i - 1] = tdHelper(i);
-          } else if (i <= 14) {
-            week2[i - 8] = tdHelper(i);
-          } else if (i <= 21) {
-            week3[i - 15] = tdHelper(i);
-          } else if (i <= 28) {
-            week4[i - 22] = tdHelper(i);
-          } else if (i <= 31) {
-            week5[i - 29] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Mo') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 6) {
-            week1[i] = tdHelper(i);
-          } else if (i <= 13) {
-            week2[i - 7] = tdHelper(i);
-          } else if (i <= 20) {
-            week3[i - 14] = tdHelper(i);
-          } else if (i <= 27) {
-            week4[i - 21] = tdHelper(i);
-          } else if (i <= 34) {
-            week5[i - 28] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Tu') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 5) {
-            week1[i + 1] = tdHelper(i);
-          } else if (i <= 12) {
-            week2[i - 6] = tdHelper(i);
-          } else if (i <= 19) {
-            week3[i - 13] = tdHelper(i);
-          } else if (i <= 26) {
-            week4[i - 20] = tdHelper(i);
-          } else if (i <= 33) {
-            week5[i - 27] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'We') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 4) {
-            week1[i + 2] = tdHelper(i);
-          } else if (i <= 11) {
-            week2[i - 5] = tdHelper(i);
-          } else if (i <= 18) {
-            week3[i - 12] = tdHelper(i);
-          } else if (i <= 25) {
-            week4[i - 19] = tdHelper(i);
-          } else if (i <= 32) {
-            week5[i - 26] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Th') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 3) {
-            week1[i + 3] = tdHelper(i);
-          } else if (i <= 10) {
-            week2[i - 4] = tdHelper(i);
-          } else if (i <= 17) {
-            week3[i - 11] = tdHelper(i);
-          } else if (i <= 24) {
-            week4[i - 18] = tdHelper(i);
-          } else if (i <= 31) {
-            week5[i - 25] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Fr') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 2) {
-            week1[i + 4] = tdHelper(i);
-          } else if (i <= 9) {
-            week2[i - 3] = tdHelper(i);
-          } else if (i <= 16) {
-            week3[i - 10] = tdHelper(i);
-          } else if (i <= 23) {
-            week4[i - 17] = tdHelper(i);
-          } else if (i <= 30) {
-            week5[i - 24] = tdHelper(i);
-          } else if (i <= 37) {
-            week6[i - 31] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Sa') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 1) {
-            week1[i + 5] = tdHelper(i);
-          } else if (i <= 8) {
-            week2[i - 2] = tdHelper(i);
-          } else if (i <= 15) {
-            week3[i - 9] = tdHelper(i);
-          } else if (i <= 22) {
-            week4[i - 16] = tdHelper(i);
-          } else if (i <= 29) {
-            week5[i - 23] = tdHelper(i);
-          } else if (i <= 36) {
-            week6[i - 30] = tdHelper(i);
-          }
-        }
+      for (let i = 1; i <= Number(endDate); i++) {
+        tdHelper(i, startDay);
       }
     } else {
       let checkOutRange = [];
@@ -239,9 +157,24 @@ class Calendar extends React.Component {
           }
         }
       }
-      let tdHelper = (i) => {
+      let tdHelper = (i, startDay) => {
         let viewDate = this.state.month.format('YYYY-MM');
         viewDate += '-' + i;
+        let dateElement;
+        let dayModifier = 0;
+        if (startDay === 'Mo') {
+          dayModifier = 1;
+        } else if (startDay === 'Tu') {
+          dayModifier = 2;
+        } else if (startDay === 'We') {
+          dayModifier = 3;
+        } else if (startDay === 'Th') {
+          dayModifier = 4;
+        } else if (startDay === 'Fr') {
+          dayModifier = 5;
+        } else if (startDay === 'Sa') {
+          dayModifier = 6;
+        }
         let checkDateAvailable = (date) => {
           let checkedDate = Date.parse(date);
           let dayBefore = checkedDate - 86400000;
@@ -268,113 +201,26 @@ class Calendar extends React.Component {
           return true;
         }
         if (Date.parse(viewDate) < Date.parse(Date()) + 86400000 || !checkDateAvailable(viewDate)) {
-          return (<td key={i} className="table-date unavailable">{i}</td>);
+          dateElement = (<td key={i} className="table-date unavailable">{i}</td>);
         } else {
-          return (<td key={i} className="table-date available checkOutDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+          dateElement = (<td key={i} className="table-date available checkOutDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+        }
+        if (i <= 7 - dayModifier) {
+          week1[dayModifier + i - 1] = dateElement;
+        } else if (i <= 14 - dayModifier) {
+          week2[dayModifier + i - 8] = dateElement;
+        } else if (i <= 21 - dayModifier) {
+          week3[dayModifier + i - 15] = dateElement;
+        } else if (i <= 28 - dayModifier) {
+          week4[dayModifier + i - 22] = dateElement;
+        } else if (i <= 35 - dayModifier) {
+          week5[dayModifier + i - 29] = dateElement;
+        } else if (i <= 42 - dayModifier) {
+          week6[dayModifier + i - 36] = dateElement;
         }
       }
-      if (startDay === 'Su') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 7) {
-            week1[i - 1] = tdHelper(i);
-          } else if (i <= 14) {
-            week2[i - 8] = tdHelper(i);
-          } else if (i <= 21) {
-            week3[i - 15] = tdHelper(i);
-          } else if (i <= 28) {
-            week4[i - 22] = tdHelper(i);
-          } else if (i <= 31) {
-            week5[i - 29] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Mo') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 6) {
-            week1[i] = tdHelper(i);
-          } else if (i <= 13) {
-            week2[i - 7] = tdHelper(i);
-          } else if (i <= 20) {
-            week3[i - 14] = tdHelper(i);
-          } else if (i <= 27) {
-            week4[i - 21] = tdHelper(i);
-          } else if (i <= 34) {
-            week5[i - 28] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Tu') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 5) {
-            week1[i + 1] = tdHelper(i);
-          } else if (i <= 12) {
-            week2[i - 6] = tdHelper(i);
-          } else if (i <= 19) {
-            week3[i - 13] = tdHelper(i);
-          } else if (i <= 26) {
-            week4[i - 20] = tdHelper(i);
-          } else if (i <= 33) {
-            week5[i - 27] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'We') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 4) {
-            week1[i + 2] = tdHelper(i);
-          } else if (i <= 11) {
-            week2[i - 5] = tdHelper(i);
-          } else if (i <= 18) {
-            week3[i - 12] = tdHelper(i);
-          } else if (i <= 25) {
-            week4[i - 19] = tdHelper(i);
-          } else if (i <= 32) {
-            week5[i - 26] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Th') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 3) {
-            week1[i + 3] = tdHelper(i);
-          } else if (i <= 10) {
-            week2[i - 4] = tdHelper(i);
-          } else if (i <= 17) {
-            week3[i - 11] = tdHelper(i);
-          } else if (i <= 24) {
-            week4[i - 18] = tdHelper(i);
-          } else if (i <= 31) {
-            week5[i - 25] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Fr') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 2) {
-            week1[i + 4] = tdHelper(i);
-          } else if (i <= 9) {
-            week2[i - 3] = tdHelper(i);
-          } else if (i <= 16) {
-            week3[i - 10] = tdHelper(i);
-          } else if (i <= 23) {
-            week4[i - 17] = tdHelper(i);
-          } else if (i <= 30) {
-            week5[i - 24] = tdHelper(i);
-          } else if (i <= 37) {
-            week6[i - 31] = tdHelper(i);
-          }
-        }
-      } else if (startDay === 'Sa') {
-        for (let i = 1; i <= Number(endDate); i++) {
-          if (i <= 1) {
-            week1[i + 5] = tdHelper(i);
-          } else if (i <= 8) {
-            week2[i - 2] = tdHelper(i);
-          } else if (i <= 15) {
-            week3[i - 9] = tdHelper(i);
-          } else if (i <= 22) {
-            week4[i - 16] = tdHelper(i);
-          } else if (i <= 29) {
-            week5[i - 23] = tdHelper(i);
-          } else if (i <= 36) {
-            week6[i - 30] = tdHelper(i);
-          }
-        }
+      for (let i = 1; i <= Number(endDate); i++) {
+        tdHelper(i, startDay);
       }
     }
     return (
