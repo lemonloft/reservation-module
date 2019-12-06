@@ -1,5 +1,90 @@
 import React from 'react';
 import moment from 'moment';
+import styled from 'styled-components';
+
+const CalendarBlockDiv = styled.div`
+  width: 280px;
+  padding-bottom: 10px;
+`;
+const ClearDatesDiv = styled.div`
+  text-align: right;
+  color: #008489;
+  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+  padding-top: 4px;
+  padding-right: 2px;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+const MonthSelectionButton = styled.button`
+  cursor: pointer;
+  user-select: none;
+  width: 38px;
+  height: 33px;
+  text-align: center;
+  background-color: white;
+  color: rgb(117, 117, 117);
+  border: 1px solid rgb(228, 231, 231);
+  border-radius: 3px;
+  &:hover {
+    border: 1px solid rgb(196, 196, 196);
+  }
+  &:active {
+    background: rgb(242, 242, 242);
+  }
+`;
+const CalendarMonthDescriptionTh = styled.th`
+  color: rgb(72, 72, 72);
+  font-size: 18px;
+  text-align: center;
+  font-family: Cicular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  padding-bottom: 10px;
+`;
+const TableDayTd = styled.td`
+  width: 38px;
+  text-align: center;
+  font-family: Cicular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  color: rgb(117, 117, 117);
+  font-size: 12px;
+`;
+const UnavailableDateTd = styled.td`
+  border: 1px double rgb(228, 231, 231);
+  width: 37px;
+  height: 36px;
+  border: 1px double rgb(228, 231, 231);
+  color: rgb(0, 0, 0);
+  background: white;
+  text-align: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgb(216, 216, 216);
+  text-decoration: line-through;
+  font-family: Cicular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+`;
+const AvailableDateTd = styled.td`
+  border: 1px double rgb(228, 231, 231);
+  width: 37px;
+  height: 36px;
+  border: 1px double rgb(228, 231, 231);
+  color: rgb(0, 0, 0);
+  background: white;
+  text-align: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgb(72, 72, 72);
+  font-family: Cicular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  &:hover {
+    background: rgb(228, 231, 231)
+  }
+`;
+const Table = styled.table`
+  border-collapse: collapse;
+  border-spacing: 0px;
+`;
+const Th = styled.th`
+  padding-bottom: 10px;
+`
 
 class Calendar extends React.Component {
   constructor(props) {
@@ -23,21 +108,22 @@ class Calendar extends React.Component {
     let whichDate = {};
     if (e.target.className.includes('checkInDate')) {
       whichDate.checkInDate = date;
-    } else {
+    } else if (e.target.className.includes('checkOutDate')) {
       whichDate.checkOutDate = date;
+    } else if (e.target.innerText === 'Clear dates') {
+      whichDate.clearDates = true;
     }
     this.props.datePicker(whichDate);
   }
-
   renderMonth() {
     let tableDays = [
-      <td key="Su" className="table-day">Su</td>,
-      <td key="Mo" className="table-day">Mo</td>,
-      <td key="Tu" className="table-day">Tu</td>,
-      <td key="We" className="table-day">We</td>,
-      <td key="Th" className="table-day">Th</td>,
-      <td key="Fr" className="table-day">Fr</td>,
-      <td key="Sa" className="table-day">Sa</td>
+      <TableDayTd key="Su" className="table-day">Su</TableDayTd>,
+      <TableDayTd key="Mo" className="table-day">Mo</TableDayTd>,
+      <TableDayTd key="Tu" className="table-day">Tu</TableDayTd>,
+      <TableDayTd key="We" className="table-day">We</TableDayTd>,
+      <TableDayTd key="Th" className="table-day">Th</TableDayTd>,
+      <TableDayTd key="Fr" className="table-day">Fr</TableDayTd>,
+      <TableDayTd key="Sa" className="table-day">Sa</TableDayTd>
     ];
 
     let startDay = this.state.month.startOf('M').format('dd');
@@ -60,7 +146,7 @@ class Calendar extends React.Component {
     let week5helper = () => {
       if (week5.length > 0) {
         return (
-          <tr className="table-date-border week5">
+          <tr className="week5">
             {week5}
           </tr>
         );
@@ -71,7 +157,7 @@ class Calendar extends React.Component {
     let week6helper = () => {
       if (week6.length > 0) {
         return (
-          <tr className="table-date-border week6">
+          <tr className="week6">
             {week6}
           </tr>
         );
@@ -110,9 +196,9 @@ class Calendar extends React.Component {
           return true;
         }
         if (Date.parse(viewDate) < Date.parse(Date()) || !checkDateAvailable(viewDate)) {
-          dateElement = (<td key={i} className="table-date unavailable">{i}</td>);
+          dateElement = (<UnavailableDateTd key={i} className="unavailable">{i}</UnavailableDateTd>);
         } else {
-          dateElement = (<td key={i} className="table-date available checkInDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+          dateElement = (<AvailableDateTd key={i} className="available checkInDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</AvailableDateTd>)
         }
         if (i <= 7 - dayModifier) {
           week1[dayModifier + i - 1] = dateElement;
@@ -201,9 +287,9 @@ class Calendar extends React.Component {
           return true;
         }
         if (Date.parse(viewDate) < Date.parse(Date()) + 86400000 || !checkDateAvailable(viewDate)) {
-          dateElement = (<td key={i} className="table-date unavailable">{i}</td>);
+          dateElement = (<UnavailableDateTd key={i} className="unavailable">{i}</UnavailableDateTd>);
         } else {
-          dateElement = (<td key={i} className="table-date available checkOutDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</td>)
+          dateElement = (<AvailableDateTd key={i} className="available checkOutDate" onClick={(e) => this.clickDate(e, viewDate)}>{i}</AvailableDateTd>)
         }
         if (i <= 7 - dayModifier) {
           week1[dayModifier + i - 1] = dateElement;
@@ -225,19 +311,19 @@ class Calendar extends React.Component {
     }
     return (
       <tbody id={this.props.view}>
-        <tr className="table-day-noborder">
+        <tr>
           {tableDays}
         </tr>
-        <tr className="table-date-border week1">
+        <tr className="week1">
           {week1}
         </tr>
-        <tr className="table-date-border week2">
+        <tr className="week2">
           {week2}
         </tr>
-        <tr className="table-date-border week3">
+        <tr className="week3">
           {week3}
         </tr>
-        <tr className="table-date-border week4">
+        <tr className="week4">
           {week4}
         </tr>
         {week5helper()}
@@ -245,27 +331,32 @@ class Calendar extends React.Component {
       </tbody>
     );
   }
-
+  renderClearDates() {
+    if (this.props.checkInDate.length || this.props.checkOutDate.length) {
+      return (<ClearDatesDiv onClick={(e) => { this.clickDate(e) }} id="clearDates">Clear dates</ClearDatesDiv>);
+    }
+  }
   render() {
     return (
-      <div id="calendar-div" className="calendar-block">
-        <table>
+      <CalendarBlockDiv id="calendar-div">
+        <Table>
           <thead>
             <tr>
-              <th>
-                <button className="calendar-month-button previousMonth" type="button" onClick={this.previousMonth}>←</button>
-              </th>
-              <th colSpan="5" className="calendar-month-description">
-                <span>{this.state.month.format('MMMM YYYY')}</span>
-              </th>
-              <th>
-                <button className="calendar-month-button nextMonth" type="button" onClick={this.nextMonth}>→</button>
-              </th>
+              <Th>
+                <MonthSelectionButton id="previousMonth" type="button" onClick={this.previousMonth}>←</MonthSelectionButton>
+              </Th>
+              <CalendarMonthDescriptionTh colSpan="5" id="calendar-month-description">
+                {this.state.month.format('MMMM YYYY')}
+              </CalendarMonthDescriptionTh>
+              <Th>
+                <MonthSelectionButton id="nextMonth" type="button" onClick={this.nextMonth}>→</MonthSelectionButton>
+              </Th>
             </tr>
           </thead>
           {this.renderMonth()}
-        </table>
-      </div>
+        </Table>
+        {this.renderClearDates()}
+      </CalendarBlockDiv>
     )
   }
 }

@@ -69,8 +69,10 @@ class App extends React.Component {
     }
   }
   datePicker(date) {
-    if (date.checkInDate) {
-      if(this.state.checkInDate.length > 0 || Date.parse(date.checkInDate) >= Date.parse(this.state.checkOutDate)){
+    if (date.clearDates) {
+      this.setState({ checkInDate: '', checkOutDate: '' });
+    } else if (date.checkInDate) {
+      if (this.state.checkInDate.length > 0 || Date.parse(date.checkInDate) >= Date.parse(this.state.checkOutDate)) {
         this.state.checkOutDate = '';
       }
       this.setState({ checkInDate: date.checkInDate });
@@ -79,7 +81,7 @@ class App extends React.Component {
       } else {
         this.setState({ view: '' });
       }
-    } else {
+    } else if (date.checkOutDate) {
       this.setState({ checkOutDate: date.checkOutDate });
       if (this.state.checkInDate.length === 0) {
         this.setState({ view: 'checkIn' });
@@ -132,14 +134,6 @@ class App extends React.Component {
       )
     }
     else {
-      let info = {
-        rating: this.state.rating,
-        pricePerNight: this.state.pricePerNight,
-        cleaningFee: this.state.cleaningFee,
-        serviceFee: this.state.serviceFee,
-        reservations: this.state.reservations,
-        reviewCount: this.state.reviewCount
-      };
       return (
         <div onClick={this.clickHandler}>
           <div>Description: {this.state.description}</div>
