@@ -59,12 +59,25 @@ const DatesArrowDiv = styled.div`
   line-height: 42px;
   color: rgb(72, 72, 72);
 `;
-const PricePerNightSpan = styled.span`
-  font-size: 22px;
-`
 const GenInfoDiv = styled.div`
   font-size: 12px;
   line-height: 2em;
+  color: rgb(72, 72, 72);
+  .pricePerNight {
+    font-size: 22px;
+  }
+  .reviews {
+    color: #767676;
+  }
+  .star {
+    color: rgb(0, 166, 153);
+  }
+`
+const BottomBorderDiv = styled.div`
+  margin-top: 16px;
+  margin-bottom: 16px;
+  width: 300px;
+  border: 0.5px solid rgb(228, 231, 231);
 `
 
 class App extends React.Component {
@@ -198,7 +211,9 @@ class App extends React.Component {
       console.log("this.state.description: ", this.state.description);
       return (
         <Div onClick={this.clickHandler}>
-          <GenInfoDiv><PricePerNightSpan>${this.state.pricePerNight}</PricePerNightSpan> per night<br />&#9733; {this.state.rating} ({this.state.reviewCount} reviews)</GenInfoDiv>
+          <GenInfoDiv><span className="pricePerNight">${this.state.pricePerNight}</span> per night<br /><span className="star">&#9733;</span> {this.state.rating} <span className="reviews">({this.state.reviewCount} reviews)</span></GenInfoDiv>
+          <BottomBorderDiv></BottomBorderDiv>
+          <GenInfoDiv>Dates</GenInfoDiv>
           <DatesDiv id="datesSelection">
             <CheckInInput id="checkin" placeholder="Check-in" readOnly bgColor={(this.state.view === 'checkIn').toString()} value={this.dateParser(this.state.checkInDate)} />
             <DatesArrowDiv>→</DatesArrowDiv>
