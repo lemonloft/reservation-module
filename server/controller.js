@@ -12,7 +12,7 @@ module.exports.getAllLofts = (req, res) => {
 };
 
 module.exports.getOneLoft = (req, res) => {
-  db.getOneLoft(req.query.q, (err, data) => {
+  db.getOneLoft(req.params.hostId, (err, data) => {
     if(err) {
       console.log('Getting loft data err: ', err);
       res.status(400).send();

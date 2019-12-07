@@ -1,6 +1,71 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Calendar from './calendar.jsx';
+import styled from 'styled-components';
+import moment from 'moment';
+
+const Div = styled.div`
+  z-index: 0;
+  height: 1000px;
+  width: 100%;
+  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+`
+const DatesDiv = styled.div`
+  border: 1px solid rgb(235, 235, 235);
+  border-radius: 2px;
+  width: 300px;
+  height: 42px;
+  display: grid;
+  grid-template-columns: 130px 40px 130px;
+`;
+const CheckInInput = styled.input`
+  font-size: 16px;
+  border: 0px none;
+  border-radius: 3px;
+  height: 24px;
+  grid-column: 1;
+  left: 10px;
+  top: 0px;
+  color: rgb(72, 72, 72);
+  margin: 7px;
+  padding-left: 7px;
+  background-color: ${props => props.bgColor === 'true' ? '#99ede6' : 'white'};
+  &:focus{
+    outline: none;
+  }
+`;
+const CheckOutInput = styled.input`
+  font-size: 16px;
+  border: 0px none;
+  border-radius: 3px;
+  height: 24px;
+  grid-column: 3;
+  right: 0px;
+  top: 0px;
+  color: rgb(72, 72, 72);
+  margin: 7px;
+  padding-left: 7px;
+  &:focus{
+    outline: none;
+  }
+  background-color: ${props => props.bgColor === 'true' ? '#99ede6' : 'white'};
+`;
+const DatesArrowDiv = styled.div`
+  grid-column: 2;
+  height: 42px;
+  font-size: 16px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 42px;
+  color: rgb(72, 72, 72);
+`;
+const PricePerNightSpan = styled.span`
+  font-size: 22px;
+`
+const GenInfoDiv = styled.div`
+  font-size: 12px;
+  line-height: 2em;
+`
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +78,6 @@ class App extends React.Component {
       serviceFee: NaN,
       reviewCount: NaN,
       reservations: [],
-      loftUrls: [],
       view: '',
       checkInDate: '',
       checkOutDate: ''
@@ -23,32 +87,25 @@ class App extends React.Component {
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
-      fetch('/allLofts', {
+      let url = 'http://localhost:3001/api/reservations';
+      if (window.location.pathname.length > 1) {
+        url += window.location.pathname;
+      }
+      fetch(url, {
         method: 'GET'
       })
         .then(response => response.json())
         .then((data) => {
-          let index = Math.floor(Math.random() * 100);
-          this.state.description = data[index].description;
-          this.state.rating = Number(data[index].rating);
-          this.state.pricePerNight = Number(data[index].pricePerNight);
-          this.state.cleaningFee = Number(data[index].cleaningFee);
-          this.state.serviceFee = Number(data[index].serviceFee);
-          this.state.reviewCount = data[index].reviewCount;
-          for (const element of data) {
-            this.state.loftUrls.push(element.url);
+          this.state.description = data[0].description;
+          this.state.rating = Number(data[0].rating);
+          this.state.pricePerNight = Number(data[0].pricePerNight);
+          this.state.cleaningFee = Number(data[0].cleaningFee);
+          this.state.serviceFee = Number(data[0].serviceFee);
+          this.state.reviewCount = data[0].reviewCount;
+          for (let element of data) {
+            this.state.reservations.push({startDate: element.startDate, endDate: element.endDate});
           }
-          fetch(`/reservations?q=${data[index].url}`, {
-            method: 'GET'
-          })
-            .then(response => response.json())
-            .then((resData) => {
-              this.state.reservations = resData.slice();
-              this.setState((state) => (state));
-            })
-            .catch(err => {
-              console.log('err: ', err);
-            })
+          this.setState((state) => (state));
         })
         .catch(err => {
           console.log('err: ', err)
@@ -90,20 +147,24 @@ class App extends React.Component {
       }
     }
   }
+  dateParser(date) {
+    if(date === '') {
+      return '';
+    }
+    return moment(date).format('MM/DD/YYYY');
+  }
   renderCalendar() {
     if (this.state.view === '') {
       return undefined;
     } else if (this.state.view === 'checkIn') {
       return (
         <div>
-          View check in:
           <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
         </div>
       );
     } else {
       return (
         <div>
-          View check out:
           <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
         </div>
       );
@@ -134,16 +195,17 @@ class App extends React.Component {
       )
     }
     else {
+      console.log("this.state.description: ", this.state.description);
       return (
-        <div onClick={this.clickHandler}>
-          <div>Description: {this.state.description}</div>
-          <div>${this.state.pricePerNight} per night<br />&#9733; {this.state.rating} ({this.state.reviewCount} reviews)</div>
-          <input id="checkin" placeholder="Check-in" readOnly value={this.state.checkInDate} />
-          <span>→</span>
-          <input id="checkout" placeholder="Checkout" readOnly value={this.state.checkOutDate} />
+        <Div onClick={this.clickHandler}>
+          <GenInfoDiv><PricePerNightSpan>${this.state.pricePerNight}</PricePerNightSpan> per night<br />&#9733; {this.state.rating} ({this.state.reviewCount} reviews)</GenInfoDiv>
+          <DatesDiv id="datesSelection">
+            <CheckInInput id="checkin" placeholder="Check-in" readOnly bgColor={(this.state.view === 'checkIn').toString()} value={this.dateParser(this.state.checkInDate)} />
+            <DatesArrowDiv>→</DatesArrowDiv>
+            <CheckOutInput id="checkout" placeholder="Checkout" readOnly bgColor={(this.state.view === 'checkOut').toString()} value={this.dateParser(this.state.checkOutDate)} />
+          </DatesDiv>
           {this.renderCalendar()}
-          <div>Suggested Locations: {this.state.loftUrls.slice(0, 10)}</div>
-        </div>
+        </Div>
       )
     }
   }
