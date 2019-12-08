@@ -4,6 +4,78 @@ import Calendar from './calendar.jsx';
 import styled from 'styled-components';
 import moment from 'moment';
 
+const GuestsContainerDiv = styled.div`
+  position: relative;
+  .guestsDropdownDiv{
+    background: white;
+    div{
+      height: 42px;
+      line-height: 42px;
+      vertical-align: middle;
+    }
+    position: absolute;
+    z-index: 1;
+    margin: 0px;
+    width: 300px;
+    padding-bottom: 10px;
+    border: 1px solid rgb(228, 231, 231);
+    font-size: 16px;
+    color: rgb(72, 72, 72);
+    .guestType {
+      float: left;
+      padding-left: 15px;
+    }
+    .circleMinus, .count, .circlePlus {
+      width: 25px;
+      float: right;
+      padding-right: 20px;
+      text-align: center;
+    }
+    .circlePlus, .circleMinus{
+      color: rgb(0, 132, 137);
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .circleMinus {
+      color: rgb(0, 132, 137, 0.5);
+      cursor: ${props => {
+    if (props.adultCount === 1) {
+      return "default";
+    } else if (props.childrenCount === 0) {
+      return "default";
+    } else if (props.infantCount === 0) {
+      return "default";
+    }
+  }}
+    }
+  }
+  .dropbtn{
+    cursor: pointer;
+    user-select: none;
+    width: 302px;
+    height: 42px;
+    text-align: left;
+    background-color: white;
+    color: rgb(117, 117, 117);
+    padding-left: 15px;
+    border: 1px solid rgb(228, 231, 231);
+    border-radius: 2px;
+    font-size: 16px;
+    &:focus{
+      outline: none;
+    }
+  }
+`;
+const CloseGuestsDiv = styled.div`
+  float: right;
+  color: #008489;
+  font-size: 14px;
+  padding-right: 20px;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 const Div = styled.div`
   z-index: 0;
   height: 1000px;
@@ -79,6 +151,23 @@ const BottomBorderDiv = styled.div`
   width: 300px;
   border: 0.5px solid rgb(228, 231, 231);
 `
+const ReserveButton = styled.button`
+  margin-top: 20px;
+  width: 302px;
+  height: 42px;
+  background: rgb(255, 90, 95);
+  color: white;
+  font-size: 16px;
+  line-height: 42px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:focus {
+    outline: none;
+  }
+  &:active {
+    background: rgb(223, 60, 71);
+  }
+`
 
 class App extends React.Component {
   constructor(props) {
@@ -93,10 +182,16 @@ class App extends React.Component {
       reservations: [],
       view: '',
       checkInDate: '',
-      checkOutDate: ''
+      checkOutDate: '',
+      adults: 1,
+      children: 0,
+      infants: 0,
+      totalGuests: 1
     };
     this.clickHandler = this.clickHandler.bind(this);
     this.datePicker = this.datePicker.bind(this);
+    this.modifyGuests = this.modifyGuests.bind(this);
+    this.makeReservation = this.makeReservation.bind(this);
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
@@ -116,7 +211,7 @@ class App extends React.Component {
           this.state.serviceFee = Number(data[0].serviceFee);
           this.state.reviewCount = data[0].reviewCount;
           for (let element of data) {
-            this.state.reservations.push({startDate: element.startDate, endDate: element.endDate});
+            this.state.reservations.push({ startDate: element.startDate, endDate: element.endDate });
           }
           this.setState((state) => (state));
         })
@@ -134,7 +229,13 @@ class App extends React.Component {
       } else {
         this.setState({ view: 'checkOut' });
       }
+    } else if (e.target.id === 'closeguests') {
+      this.setState({ view: '' });
     } else if (document.getElementById('calendar-div') !== null && !document.getElementById('calendar-div').contains(e.target)) {
+      this.setState({ view: '' });
+    } else if (e.target.className === 'dropbtn' || (document.getElementById('guestsDropdownDiv') !== null && document.getElementById('guestsDropdownDiv').contains(e.target))) {
+      this.setState({ view: 'guests' });
+    } else if (this.state.view === 'guests' && e.target.className !== 'dropbtn') {
       this.setState({ view: '' });
     }
   }
@@ -161,21 +262,19 @@ class App extends React.Component {
     }
   }
   dateParser(date) {
-    if(date === '') {
+    if (date === '') {
       return '';
     }
     return moment(date).format('MM/DD/YYYY');
   }
   renderCalendar() {
-    if (this.state.view === '') {
-      return undefined;
-    } else if (this.state.view === 'checkIn') {
+    if (this.state.view === 'checkIn') {
       return (
         <div>
           <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
         </div>
       );
-    } else {
+    } else if (this.state.view === 'checkOut') {
       return (
         <div>
           <Calendar reservations={this.state.reservations} view={this.state.view} datePicker={this.datePicker} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} />
@@ -183,24 +282,75 @@ class App extends React.Component {
       );
     }
   }
-
-  //       let sampleReservation = {
-  //         loft_id: 1,
-  //         startDate: '2019-12-24',
-  //         endDate: '2019-12-26'
-  //       }
-  //       fetch('/reservations', {
-  //         method: 'POST',
-  //         body: JSON.stringify(sampleReservation),
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //         }
-  //       })
-  //       .then(() => {
-  //         fetch(`/reservations?q=${data[0].url}`,{
-  //           method: 'GET'
-  //         })
-  //         .then(response => response.json())
+  renderGuests() {
+    if (this.state.view === 'guests') {
+      return (
+        <div id='guestsDropdownDiv' className='guestsDropdownDiv'>
+          <div id='adults'><div className="guestType">Adults</div><div className="circlePlus" onClick={(e) => this.modifyGuests(e)}>&#8853;</div><div className="count">{this.state.adults}</div><div className="circleMinus" onClick={(e) => this.modifyGuests(e)}>&#8854;</div></div>
+          <div id='children'><div className="guestType">Children</div><div className="circlePlus" onClick={(e) => this.modifyGuests(e)}>&#8853;</div><div className="count">{this.state.children}</div><div className="circleMinus" onClick={(e) => this.modifyGuests(e)}>&#8854;</div></div>
+          <div id='infants'><div className="guestType">Infants</div><div className="circlePlus" onClick={(e) => this.modifyGuests(e)}>&#8853;</div><div className="count">{this.state.infants}</div><div className="circleMinus" onClick={(e) => this.modifyGuests(e)}>&#8854;</div></div>
+          <CloseGuestsDiv id="closeguests" onClick={this.clickHandler}>Close</CloseGuestsDiv>
+        </div>
+      );
+    }
+  }
+  modifyGuests(e) {
+    if (e.target.parentElement.id === 'adults') {
+      if (e.target.className === 'circlePlus') {
+        this.setState({ adults: this.state.adults + 1, totalGuests: this.state.adults + this.state.children + 1 });
+      } else if (e.target.className === 'circleMinus' && this.state.adults > 1) {
+        this.setState({ adults: this.state.adults - 1, totalGuests: this.state.adults + this.state.children - 1 });
+      }
+    } else if (e.target.parentElement.id === 'children') {
+      if (e.target.className === 'circlePlus') {
+        this.setState({ children: this.state.children + 1, totalGuests: this.state.adults + this.state.children + 1 });
+      } else if (e.target.className === 'circleMinus' && this.state.children > 0) {
+        this.setState({ children: this.state.children - 1, totalGuests: this.state.adults + this.state.children - 1 });
+      }
+    } else if (e.target.parentElement.id === 'infants') {
+      if (e.target.className === 'circlePlus') {
+        this.setState({ infants: this.state.infants + 1 });
+      } else if (e.target.className === 'circleMinus' && this.state.infants > 0) {
+        this.setState({ infants: this.state.infants - 1 });
+      }
+    }
+  }
+  makeReservation() {
+    if (this.state.checkInDate.length === 0) {
+      this.setState({ view: 'checkIn' });
+    } else if (this.state.checkOutDate.length === 0) {
+      this.setState({ view: 'checkOut' });
+    } else {
+      let newReservation = {
+        startDate: this.state.checkInDate,
+        endDate: this.state.checkOutDate
+      }
+      let url = 'http://localhost:3001/api/reservations';
+      if (window.location.pathname.length > 1) {
+        url += window.location.pathname;
+      }
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(newReservation),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          this.setState({
+            reservations: [],
+            view: '',
+            checkInDate: '',
+            checkOutDate: '',
+            adults: 1,
+            children: 0,
+            infants: 0,
+            totalGuests: 1
+          });
+          this.componentDidMount();
+        })
+    }
+  }
   render() {
     if (this.state.reservations.length === 0) {
       return (
@@ -220,6 +370,12 @@ class App extends React.Component {
             <CheckOutInput id="checkout" placeholder="Checkout" readOnly bgColor={(this.state.view === 'checkOut').toString()} value={this.dateParser(this.state.checkOutDate)} />
           </DatesDiv>
           {this.renderCalendar()}
+          <GuestsContainerDiv>
+            <GenInfoDiv><br />Guests</GenInfoDiv>
+            <button className="dropbtn">{this.state.totalGuests} guest(s)</button>
+            {this.renderGuests()}
+          </GuestsContainerDiv>
+          <ReserveButton onClick={this.makeReservation}>Reserve</ReserveButton>
         </Div>
       )
     }

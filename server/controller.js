@@ -23,7 +23,12 @@ module.exports.getOneLoft = (req, res) => {
 }
 
 module.exports.addOneReservation = (req, res) => {
-  db.addOneReservation(req.body, (err, data) => {
+  let addObj = {
+    loft_id: Number(req.params.hostId),
+    startDate: req.body.startDate,
+    endDate: req.body.endDate
+  }
+  db.addOneReservation(addObj, (err, data) => {
     if(err) {
       console.log('Error adding reservation to db: ', err);
       res.status(400).send();

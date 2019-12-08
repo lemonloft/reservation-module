@@ -28,6 +28,7 @@ const CalendarBlockDiv = styled.div`
   width: 300px;
   padding-bottom: 10px;
   border: 1px solid rgb(228, 231, 231);
+  background-color: white;
 `;
 const ClearDatesDiv = styled.div`
   text-align: right;
@@ -113,6 +114,7 @@ const Table = styled.table`
   margin: 0 auto;
   border-collapse: collapse;
   border-spacing: 0px;
+  background-color: white;
 `;
 const Th = styled.th`
   padding-top: 10px;
@@ -291,7 +293,7 @@ class Calendar extends React.Component {
       for (let i = 1; i <= Number(endDate); i++) {
         tdHelper(i, startDay);
       }
-    } else {
+    } else if (this.props.view === 'checkOut') {
       let checkOutRange = [];
       if (this.props.checkInDate.length > 0) {
         let reservedDates = this.props.reservations.slice();
@@ -420,7 +422,7 @@ class Calendar extends React.Component {
     }
   }
   renderPolygon() {
-    if (this.props.view === 'checkIn'){
+    if (this.props.view === 'checkIn') {
       return (
         <Svg>
           <GreyLinesPolygon points="40,10 50,0" />
@@ -428,7 +430,7 @@ class Calendar extends React.Component {
           <WhiteLinePolygon points="41,10 59,10" />
         </Svg>
       )
-    } else {
+    } else if (this.props.view === 'checkOut') {
       return (
         <Svg>
           <GreyLinesPolygon points="210,10 220,0" />
