@@ -12,7 +12,7 @@ module.exports.getAllLofts = (req, res) => {
 };
 
 module.exports.getOneLoft = (req, res) => {
-  db.getOneLoft(req.query.q, (err, data) => {
+  db.getOneLoft(req.params.hostId, (err, data) => {
     if(err) {
       console.log('Getting loft data err: ', err);
       res.status(400).send();
@@ -23,7 +23,12 @@ module.exports.getOneLoft = (req, res) => {
 }
 
 module.exports.addOneReservation = (req, res) => {
-  db.addOneReservation(req.body, (err, data) => {
+  let addObj = {
+    loft_id: Number(req.params.hostId),
+    startDate: req.body.startDate,
+    endDate: req.body.endDate
+  }
+  db.addOneReservation(addObj, (err, data) => {
     if(err) {
       console.log('Error adding reservation to db: ', err);
       res.status(400).send();
