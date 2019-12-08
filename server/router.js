@@ -1,7 +1,7 @@
-const express = require ('express');
-const bodyParser = require ('body-parser');
-const path = require ('path');
-const controller = require ('./controller.js');
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const controller = require('./controller.js');
 
 const app = express();
 const port = 3001;
