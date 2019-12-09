@@ -344,7 +344,7 @@ class App extends React.Component {
           <PriceDiv>${this.state.pricePerNight} x {totalNights} {nightsText}<div className="cost">${this.state.pricePerNight * totalNights}</div></PriceDiv>
           <PriceDiv>Cleaning fee<div className="cost">${this.state.cleaningFee}</div></PriceDiv>
           <PriceDiv>Service fee<div className="cost">${this.state.serviceFee}</div></PriceDiv>
-          <PriceDiv feeView="totalCost">Total<div className="cost">${this.state.serviceFee + this.state.cleaningFee + this.state.pricePerNight * totalNights}</div></PriceDiv>
+          <PriceDiv feeView="totalCost">Total<div className="cost">${(this.state.serviceFee * 100 + this.state.cleaningFee * 100 + (this.state.pricePerNight * totalNights) * 100) / 100}</div></PriceDiv>
         </div>
       )
     } else {
