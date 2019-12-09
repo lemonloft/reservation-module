@@ -39,14 +39,14 @@ const GuestsContainerDiv = styled.div`
     .circleMinus {
       color: rgb(0, 132, 137, 0.5);
       cursor: ${props => {
-    if (props.adultCount === 1) {
-      return "default";
-    } else if (props.childrenCount === 0) {
-      return "default";
-    } else if (props.infantCount === 0) {
-      return "default";
-    }
-  }}
+        if (props.adultCount === 1) {
+          return "default";
+        } else if (props.childrenCount === 0) {
+          return "default";
+        } else if (props.infantCount === 0) {
+          return "default";
+        }
+      }}
     }
   }
   .dropbtn{
@@ -65,6 +65,23 @@ const GuestsContainerDiv = styled.div`
       outline: none;
     }
   }
+`;
+const PriceDiv = styled.div`
+  position: relative;
+  width: 300px;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: rgb(72, 72, 72);
+  border-bottom: 1px solid rgb(228, 231, 231);
+  .cost {
+    float: right;
+  }
+  ${props => {
+    if(props.feeView === 'totalCost'){
+      return 'padding-bottom: 0px; border-bottom: none; font-weight: 550;'
+    }
+  }}
 `;
 const CloseGuestsDiv = styled.div`
   float: right;
@@ -133,7 +150,7 @@ const DatesArrowDiv = styled.div`
 `;
 const GenInfoDiv = styled.div`
   font-size: 12px;
-  line-height: 2em;
+  line-height: 1.5em;
   color: rgb(72, 72, 72);
   .pricePerNight {
     font-size: 22px;
@@ -151,11 +168,14 @@ const BottomBorderDiv = styled.div`
   width: 300px;
   border: 0.5px solid rgb(228, 231, 231);
 `
-const ReserveButton = styled.button`
+const ReserveButton = styled.div`
   margin-top: 20px;
+  text-align: center;
+  vertical-align: middle;
   width: 302px;
   height: 42px;
   background: rgb(255, 90, 95);
+  border: 0;
   color: white;
   font-size: 16px;
   line-height: 42px;
@@ -192,6 +212,7 @@ class App extends React.Component {
     this.datePicker = this.datePicker.bind(this);
     this.modifyGuests = this.modifyGuests.bind(this);
     this.makeReservation = this.makeReservation.bind(this);
+    this.renderPrices = this.renderPrices.bind(this);
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
@@ -294,6 +315,26 @@ class App extends React.Component {
       );
     }
   }
+  renderPrices() {
+    if (this.state.checkInDate.length > 0 && this.state.checkOutDate.length > 0) {
+      const totalNights = moment(this.state.checkOutDate).diff(moment(this.state.checkInDate), 'days');
+      let nightsText = "night";
+      if (totalNights > 1) {
+        nightsText += 's';
+      }
+      debugger;
+      return (
+        <div>
+          <PriceDiv>${this.state.pricePerNight} x {totalNights} {nightsText}<div className="cost">${this.state.pricePerNight * totalNights}</div></PriceDiv>
+          <PriceDiv>Cleaning fee<div className="cost">${this.state.cleaningFee}</div></PriceDiv>
+          <PriceDiv>Service fee<div className="cost">${this.state.serviceFee}</div></PriceDiv>
+          <PriceDiv feeView="totalCost">Total<div className="cost">${this.state.serviceFee + this.state.cleaningFee + this.state.pricePerNight * totalNights}</div></PriceDiv>
+        </div>
+      )
+    } else {
+      return;
+    }
+  }
   modifyGuests(e) {
     if (e.target.parentElement.id === 'adults') {
       if (e.target.className === 'circlePlus') {
@@ -375,6 +416,7 @@ class App extends React.Component {
             <button className="dropbtn">{this.state.totalGuests} guest(s)</button>
             {this.renderGuests()}
           </GuestsContainerDiv>
+          {this.renderPrices()}
           <ReserveButton onClick={this.makeReservation}>Reserve</ReserveButton>
         </Div>
       )
