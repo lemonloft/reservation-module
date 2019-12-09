@@ -61,27 +61,14 @@ const GuestsContainerDiv = styled.div`
     border: 1px solid rgb(228, 231, 231);
     border-radius: 2px;
     font-size: 16px;
+    .caret {
+      float: right;
+      padding-right: 12px;
+    }
     &:focus{
       outline: none;
     }
   }
-`;
-const PriceDiv = styled.div`
-  position: relative;
-  width: 300px;
-  font-size: 14px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  color: rgb(72, 72, 72);
-  border-bottom: 1px solid rgb(228, 231, 231);
-  .cost {
-    float: right;
-  }
-  ${props => {
-    if(props.feeView === 'totalCost'){
-      return 'padding-bottom: 0px; border-bottom: none; font-weight: 550;'
-    }
-  }}
 `;
 const CloseGuestsDiv = styled.div`
   float: right;
@@ -93,12 +80,6 @@ const CloseGuestsDiv = styled.div`
     text-decoration: underline;
   }
 `;
-const Div = styled.div`
-  z-index: 0;
-  height: 1000px;
-  width: 100%;
-  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
-`
 const DatesDiv = styled.div`
   border: 1px solid rgb(235, 235, 235);
   border-radius: 2px;
@@ -161,7 +142,31 @@ const GenInfoDiv = styled.div`
   .star {
     color: rgb(0, 166, 153);
   }
-`
+`;
+const GreyLinesPolygon = styled.polygon`
+  stroke: rgb(150, 150, 150);
+  stroke-width: 2;
+`;
+const Svg = styled.svg`
+  width: 24px;
+  height: 12px;
+`;
+const PriceDiv = styled.div`
+  width: 300px;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: rgb(72, 72, 72);
+  border-bottom: 1px solid rgb(228, 231, 231);
+  .cost {
+    float: right;
+  }
+  ${props => {
+    if(props.feeView === 'totalCost'){
+      return 'padding-bottom: 0px; border-bottom: none; font-weight: 550;'
+    }
+  }}
+`;
 const BottomBorderDiv = styled.div`
   margin-top: 16px;
   margin-bottom: 16px;
@@ -187,6 +192,18 @@ const ReserveButton = styled.div`
   &:active {
     background: rgb(223, 60, 71);
   }
+`
+const Div = styled.div`
+  z-index: 0;
+  height: 1000px;
+  width: 100%;
+  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+`
+const ReservationBlock = styled.div`
+  z-index: 0;
+  border: 1px solid rgb(228, 231, 231);
+  padding: 10px;
+  width: 305px;
 `
 
 class App extends React.Component {
@@ -254,7 +271,7 @@ class App extends React.Component {
       this.setState({ view: '' });
     } else if (document.getElementById('calendar-div') !== null && !document.getElementById('calendar-div').contains(e.target)) {
       this.setState({ view: '' });
-    } else if (e.target.className === 'dropbtn' || (document.getElementById('guestsDropdownDiv') !== null && document.getElementById('guestsDropdownDiv').contains(e.target))) {
+    } else if (e.target.className === 'caret' || e.target.className === 'dropbtn' || (document.getElementById('guestsDropdownDiv') !== null && document.getElementById('guestsDropdownDiv').contains(e.target))) {
       this.setState({ view: 'guests' });
     } else if (this.state.view === 'guests' && e.target.className !== 'dropbtn') {
       this.setState({ view: '' });
@@ -322,7 +339,6 @@ class App extends React.Component {
       if (totalNights > 1) {
         nightsText += 's';
       }
-      debugger;
       return (
         <div>
           <PriceDiv>${this.state.pricePerNight} x {totalNights} {nightsText}<div className="cost">${this.state.pricePerNight * totalNights}</div></PriceDiv>
@@ -399,25 +415,44 @@ class App extends React.Component {
       )
     }
     else {
-      console.log("this.state.description: ", this.state.description);
+      let caret = (
+        <Svg>
+          <GreyLinesPolygon points="0,12 12,0" />
+          <GreyLinesPolygon points="12,0 24,12" />
+        </Svg>
+      );
+      if(this.state.view === 'guests'){
+        caret = (
+          <Svg>
+            <GreyLinesPolygon points="0,0 12,12" />
+            <GreyLinesPolygon points="12,12 24,0" />
+          </Svg>
+        )
+      }
+      let guestsText = 'guest';
+      if(this.state.totalGuests > 1) {
+        guestsText += 's';
+      }
       return (
         <Div onClick={this.clickHandler}>
-          <GenInfoDiv><span className="pricePerNight">${this.state.pricePerNight}</span> per night<br /><span className="star">&#9733;</span> {this.state.rating} <span className="reviews">({this.state.reviewCount} reviews)</span></GenInfoDiv>
-          <BottomBorderDiv></BottomBorderDiv>
-          <GenInfoDiv>Dates</GenInfoDiv>
-          <DatesDiv id="datesSelection">
-            <CheckInInput id="checkin" placeholder="Check-in" readOnly bgColor={(this.state.view === 'checkIn').toString()} value={this.dateParser(this.state.checkInDate)} />
-            <DatesArrowDiv>→</DatesArrowDiv>
-            <CheckOutInput id="checkout" placeholder="Checkout" readOnly bgColor={(this.state.view === 'checkOut').toString()} value={this.dateParser(this.state.checkOutDate)} />
-          </DatesDiv>
-          {this.renderCalendar()}
-          <GuestsContainerDiv>
-            <GenInfoDiv><br />Guests</GenInfoDiv>
-            <button className="dropbtn">{this.state.totalGuests} guest(s)</button>
-            {this.renderGuests()}
-          </GuestsContainerDiv>
-          {this.renderPrices()}
-          <ReserveButton onClick={this.makeReservation}>Reserve</ReserveButton>
+          <ReservationBlock>
+            <GenInfoDiv><span className="pricePerNight">${this.state.pricePerNight}</span> per night<br /><span className="star">&#9733;</span> {this.state.rating} <span className="reviews">({this.state.reviewCount} reviews)</span></GenInfoDiv>
+            <BottomBorderDiv></BottomBorderDiv>
+            <GenInfoDiv>Dates</GenInfoDiv>
+            <DatesDiv id="datesSelection">
+              <CheckInInput id="checkin" placeholder="Check-in" readOnly bgColor={(this.state.view === 'checkIn').toString()} value={this.dateParser(this.state.checkInDate)} />
+              <DatesArrowDiv>→</DatesArrowDiv>
+              <CheckOutInput id="checkout" placeholder="Checkout" readOnly bgColor={(this.state.view === 'checkOut').toString()} value={this.dateParser(this.state.checkOutDate)} />
+            </DatesDiv>
+            {this.renderCalendar()}
+            <GuestsContainerDiv>
+              <GenInfoDiv><br />Guests</GenInfoDiv>
+              <button className="dropbtn">{this.state.totalGuests} {guestsText}<div className="caret">{caret}</div></button>
+              {this.renderGuests()}
+            </GuestsContainerDiv>
+            {this.renderPrices()}
+            <ReserveButton onClick={this.makeReservation}>Reserve</ReserveButton>
+          </ReservationBlock>
         </Div>
       )
     }
