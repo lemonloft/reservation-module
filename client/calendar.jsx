@@ -166,9 +166,8 @@ class Calendar extends React.Component {
       <TableDayTd key="Sa" className="table-day">Sa</TableDayTd>
     ];
 
-    let startDay = this.state.month.startOf('M').format('DD');
+    let startDay = this.state.month.startOf('M').format('dd');
     let endDate = this.state.month.endOf('M').format('DD');
-
     let week1 = [
       <td key="blankDate1" className="table-date"></td>,
       <td key="blankDate2" className="table-date"></td>,

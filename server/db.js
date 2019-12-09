@@ -1,104 +1,104 @@
 const Sequelize = require('sequelize');
 
-var sequelize = new Sequelize('LemonLoft', 'loftuser', 'password', {
+const sequelize = new Sequelize('LemonLoft', 'loftuser', 'password', {
   host: 'localhost',
   dialect: 'mysql',
   pool: {
     max: 5,
     min: 0,
-    idle: 10000
-  }
+    idle: 10000,
+  },
 });
 
 sequelize
-    .authenticate()
-    .then(function (err) {
-      console.log('Connection has been established successfully.');
-    })
-    .catch(function (err) {
-      console.log('Unable to connect to the database: ', err);
-    });
-    
-var Loft = sequelize.define('lofts', {
-  'id': {
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((err) => {
+    console.log('Unable to connect to the database: ', err);
+  });
+
+const Loft = sequelize.define('lofts', {
+  id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
-  'description': {
-    type: Sequelize.STRING(500)
+  description: {
+    type: Sequelize.STRING(500),
   },
-  'pricePerNight': {
-    type: Sequelize.DECIMAL
+  pricePerNight: {
+    type: Sequelize.DECIMAL,
   },
-  'cleaningFee': {
-    type: Sequelize.DECIMAL
+  cleaningFee: {
+    type: Sequelize.DECIMAL,
   },
-  'serviceFee': {
-    type: Sequelize.DECIMAL
+  serviceFee: {
+    type: Sequelize.DECIMAL,
   },
-  'rating': {
-    type: Sequelize.DECIMAL
+  rating: {
+    type: Sequelize.DECIMAL,
   },
-  'url': {
-    type: Sequelize.STRING(100)
+  url: {
+    type: Sequelize.STRING(100),
   },
-  'reviewCount': {
-    type: Sequelize.INTEGER
-  }
+  reviewCount: {
+    type: Sequelize.INTEGER,
+  },
 }, {
-  timestamps: false
+  timestamps: false,
 });
 
-var Reservation = sequelize.define('reservations', {
-  'res_id': {
+const Reservation = sequelize.define('reservations', {
+  res_id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
-  'loft_id': {
-    type: Sequelize.INTEGER
+  loft_id: {
+    type: Sequelize.INTEGER,
   },
-  'startDate': {
-    type: Sequelize.DATE
+  startDate: {
+    type: Sequelize.DATE,
   },
-  'endDate': {
-    type: Sequelize.DATE
-  }
+  endDate: {
+    type: Sequelize.DATE,
+  },
 }, {
-  timestamps: false
+  timestamps: false,
 });
 
 module.exports.getAllLofts = (cb) => {
   Loft.findAll()
-  .then(allLoftData => {
-    cb(null, allLoftData);
-  })
-  .catch(err => {
-    console.log('There was an error getting all loft data: ', err);
-  });
+    .then((allLoftData) => {
+      cb(null, allLoftData);
+    })
+    .catch((err) => {
+      console.log('There was an error getting all loft data: ', err);
+    });
 };
 
 module.exports.getOneLoft = (hostId, cb) => {
-  hostId = Number(hostId);
-  sequelize.query(`SELECT * FROM reservations, lofts WHERE reservations.loft_id = ${hostId} AND lofts.id = ${hostId}`)
-  .then(data => {
-    cb(null, data);
-  })
-  .catch(err => {
-    console.log('There was an error getting loft data: ', err);
-  });
-}
+  const loftId = Number(hostId);
+  sequelize.query(`SELECT * FROM reservations, lofts WHERE reservations.loft_id = ${loftId} AND lofts.id = ${loftId}`)
+    .then((data) => {
+      cb(null, data);
+    })
+    .catch((err) => {
+      console.log('There was an error getting loft data: ', err);
+    });
+};
 
 module.exports.addOneReservation = (reservation, cb) => {
   Reservation.upsert(reservation)
-  .then(() => {
-    cb(null, 'SUCCESS');
-  })
-  .catch(err => {
-    console.log('There was an error upserting in sqlize: ', err);
-  });
-}
+    .then(() => {
+      cb(null, 'SUCCESS');
+    })
+    .catch((err) => {
+      console.log('There was an error upserting in sqlize: ', err);
+    });
+};
 
 module.exports.db = sequelize;
 module.exports.Loft = Loft;
