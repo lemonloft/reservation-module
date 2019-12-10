@@ -388,6 +388,8 @@ class App extends React.Component {
       let url = 'http://localhost:3001/api/reservations';
       if (window.location.pathname.length > 1) {
         url += window.location.pathname;
+      } else {
+        url += '/1';
       }
       fetch(url, {
         method: 'POST',
