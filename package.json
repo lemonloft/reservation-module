@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose --collectCoverage",
-    "build": "webpack -w -d",
+    "build:dev": "webpack -w -d",
     "db:setup": "node server/seed/seed.js",
     "server": "nodemon --inspect server/router.js",
-    "pretest": "eslint ."
+    "pretest": "eslint .",
+    "build:production": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
