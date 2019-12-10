@@ -195,8 +195,6 @@ const ReserveButton = styled.div`
 `
 const Div = styled.div`
   z-index: 0;
-  height: 1000px;
-  width: 100%;
   font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
 `
 const ReservationBlock = styled.div`
@@ -235,10 +233,10 @@ class App extends React.Component {
     if (!this.state.reservations.length) {
       let url = 'http://localhost:3001/api/reservations';
       if (window.location.pathname.length <= 1) {
-        let randomUrl = Math.ceil(Math.random() * 100);
-        window.location.replace('http://localhost:3001/' + randomUrl);
+        url += '/1';
+      } else {
+        url += window.location.pathname;
       }
-      url += window.location.pathname;
       fetch(url, {
         method: 'GET'
       })
