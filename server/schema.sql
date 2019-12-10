@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS LemonLoft;
+DROP DATABASE IF EXISTS LemonLoftReservations;
 
-CREATE DATABASE LemonLoft;
+CREATE DATABASE LemonLoftReservations;
 
-use LemonLoft;
+use LemonLoftReservations;
 
 CREATE TABLE `lofts` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
