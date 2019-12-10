@@ -234,9 +234,11 @@ class App extends React.Component {
   componentDidMount() {
     if (!this.state.reservations.length) {
       let url = 'http://localhost:3001/api/reservations';
-      if (window.location.pathname.length > 1) {
-        url += window.location.pathname;
+      if (window.location.pathname.length <= 1) {
+        let randomUrl = Math.ceil(Math.random() * 100);
+        window.location.replace('http://localhost:3001/' + randomUrl);
       }
+      url += window.location.pathname;
       fetch(url, {
         method: 'GET'
       })
@@ -459,4 +461,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('ReservationModule'));
