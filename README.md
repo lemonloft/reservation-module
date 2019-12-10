@@ -13,4 +13,4 @@ Linting is performed by ESLint. Run `pretest` to start linting.
 The server is routed using express. Nodemon is used to run the server in developer versions. Run `server` to start server with nodemon.
 
 ## Build
-React files and components are located in the `/client` directory. These files are then bundled using webpack. Run `build` to build the public webpack file. 
+React files and components are located in the `/client` directory. These files are then bundled using webpack. Run `build:production` to build the public webpack file. Run `build:dev` to build the dev file.
