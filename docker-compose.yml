@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   server:
-    build: server/
+    build: ./
     depends_on:
       - 'database'
     ports: 
@@ -10,3 +10,11 @@ services:
 
   database:
     image: mysql:5.7.28
+    environment:
+      MYSQL_DATABASE: 'LemonLoftReservations'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'LoftUser'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+    ports:
+      - '3306:3306'

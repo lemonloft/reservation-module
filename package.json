@@ -7,7 +7,9 @@
     "test": "jest --watchAll --verbose --collectCoverage",
     "build:dev": "webpack -w -d",
     "db:setup": "node server/seed/seed.js",
-    "server": "nodemon --inspect server/router.js",
+    "start": "node server/router.js",
+    "server": "nodemon server/router.js",
+    "server:insepct": "nodemon --inspect server/router.js",
     "pretest": "eslint .",
     "build:production": "webpack --mode=production"
   },
@@ -54,6 +56,7 @@
     "faker": "^4.1.0",
     "moment": "^2.24.0",
     "mysql2": "^2.0.1",
+    "node": "^13.3.0",
     "nodemon": "^2.0.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
