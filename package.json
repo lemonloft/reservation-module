@@ -6,10 +6,10 @@
   "scripts": {
     "test": "jest --watchAll --verbose --collectCoverage",
     "build:dev": "webpack -w -d",
-    "db:setup": "node server/seed/seed.js",
-    "start": "node server/router.js",
-    "server": "nodemon server/router.js",
-    "server:insepct": "nodemon --inspect server/router.js",
+    "db:setup": "node ./server/seed/seed.js",
+    "start": "node ./server/router.js",
+    "server": "nodemon ./server/router.js",
+    "server:insepct": "nodemon --inspect ./server/router.js",
     "pretest": "eslint .",
     "build:production": "webpack --mode=production"
   },
@@ -58,6 +58,7 @@
     "mysql2": "^2.0.1",
     "node": "^13.3.0",
     "nodemon": "^2.0.1",
+    "path": "^0.12.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "sequelize": "^5.21.2",

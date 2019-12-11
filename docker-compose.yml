@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   server:
@@ -7,14 +7,15 @@ services:
       - 'database'
     ports: 
       - '3001:3001'
+    command: bash -c "chmod +x ./wait-for-it.sh && ./wait-for-it.sh database:3306 && npm run db:setup && npm start"
 
   database:
     image: mysql:5.7.28
+    restart: always
     environment:
       MYSQL_DATABASE: 'LemonLoftReservations'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'LoftUser'
-      # You can use whatever password you like
+      MYSQL_USER: 'loftuser'
       MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
       - '3306:3306'
