@@ -9,7 +9,7 @@
     "db:setup": "node ./server/seed/seed.js",
     "start": "node ./server/router.js",
     "server": "nodemon ./server/router.js",
-    "server:insepct": "nodemon --inspect ./server/router.js",
+    "server:inspect": "nodemon --inspect ./server/router.js",
     "pretest": "eslint .",
     "build:production": "webpack --mode=production"
   },
