@@ -234,7 +234,7 @@ class App extends React.Component {
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
-      let origin = '13.52.106.225';
+      let origin = 'http://13.52.106.225';
       let url = `${origin}/api/reservations`;
       if (window.location.pathname.length <= 1) {
         url += '/1';
@@ -386,7 +386,7 @@ class App extends React.Component {
         startDate: this.state.checkInDate,
         endDate: this.state.checkOutDate
       }
-      let origin = '13.52.106.225';
+      let origin = 'http://13.52.106.225';
       let url = `${origin}/api/reservations`;
       if (window.location.pathname.length <= 1) {
         url += '/1';

@@ -27,4 +27,4 @@ app.post('/api/reservations/:hostId', (req, res) => {
   controller.addOneReservation(req, res);
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Lemon Loft reservation server listening on port ${port}!`));
