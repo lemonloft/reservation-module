@@ -234,7 +234,8 @@ class App extends React.Component {
   }
   componentDidMount() {
     if (!this.state.reservations.length) {
-      let url = 'http://localhost:3001/api/reservations';
+      let origin = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+      let url = `${origin}/api/reservations`;
       if (window.location.pathname.length <= 1) {
         url += '/1';
       } else {
@@ -385,7 +386,8 @@ class App extends React.Component {
         startDate: this.state.checkInDate,
         endDate: this.state.checkOutDate
       }
-      let url = 'http://localhost:3001/api/reservations';
+      let origin = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+      let url = `${origin}/api/reservations`;
       if (window.location.pathname.length <= 1) {
         url += '/1';
       } else {
