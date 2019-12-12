@@ -386,10 +386,10 @@ class App extends React.Component {
         endDate: this.state.checkOutDate
       }
       let url = 'http://localhost:3001/api/reservations';
-      if (window.location.pathname.length > 1) {
-        url += window.location.pathname;
-      } else {
+      if (window.location.pathname.length <= 1) {
         url += '/1';
+      } else {
+        url += window.location.pathname;
       }
       fetch(url, {
         method: 'POST',

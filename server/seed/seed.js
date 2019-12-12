@@ -2,10 +2,11 @@ const faker = require('faker');
 const reservationsGenerator = require('./reservationsGenerator.js');
 const { Loft } = require('../db');
 const { Reservation } = require('../db');
+const { sequelize } = require('../db');
 
 const loftSynonyms = ['apartment', 'hostel', 'hotel', 'inn', 'lodge', 'motel', 'resort', 'shelter', 'abode', 'castle', 'palace', 'room', 'lodging', 'penthouse', 'studio', 'house', 'mansion'];
 
-const seedFn = (() => {
+sequelize.sync({force: true}).then(() => {
   for (let i = 1; i <= 100; i++) {
     const lodging = {};
     const adjective = faker.commerce.productAdjective();
@@ -30,4 +31,3 @@ const seedFn = (() => {
       });
   }
 });
-seedFn();
