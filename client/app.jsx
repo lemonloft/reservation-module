@@ -196,9 +196,9 @@ const ReserveButton = styled.div`
 const Div = styled.div`
   z-index: 0;
   font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
-  float: right;
-  margin-top: 4px;
-  margin-right: 4px;
+  position: sticky;
+  top: 4px;
+  left: 0;
 `
 const ReservationBlock = styled.div`
   z-index: 0;
