@@ -63,3 +63,5 @@ typings/
 
 # keys and key pairs
 keys/
+
+/docker-compose.yml
