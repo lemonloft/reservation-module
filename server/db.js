@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('LemonLoftReservations', 'loftuser', 'password', {
-  host: 'database',
+  host: process.env.NODE_ENV === 'production' ? 'database' : '',
   dialect: 'mysql',
   pool: {
     max: 5,

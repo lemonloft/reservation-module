@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/', express.static(path.join(__dirname, '../public')));
+// app.use('/bundle.js',express.static(path.join(__dirname, '../public/bundle.js')));
 app.use('/:hostId', express.static(path.join(__dirname, '../public')));
 
 app.get('/api/reservations/allLofts', (req, res) => {
@@ -26,4 +27,4 @@ app.post('/api/reservations/:hostId', (req, res) => {
   controller.addOneReservation(req, res);
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Lemon Loft reservation server listening on port ${port}!`));

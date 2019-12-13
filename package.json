@@ -6,10 +6,10 @@
   "scripts": {
     "test": "jest --watchAll --verbose --collectCoverage",
     "build:dev": "webpack -w -d",
-    "db:setup": "node ./server/seed/seed.js",
-    "start": "node ./server/router.js",
-    "server": "nodemon ./server/router.js",
-    "server:inspect": "nodemon --inspect ./server/router.js",
+    "db:setup": "node server/seed/seed.js",
+    "start": "node server/router.js",
+    "server": "nodemon server/router.js",
+    "server:inspect": "nodemon --inspect server/router.js",
     "pretest": "eslint .",
     "build:production": "webpack --mode=production"
   },
@@ -45,9 +45,7 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "jest": "^24.9.0",
     "jest-styled-components": "^6.3.4",
-    "sinon": "^7.5.0",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "sinon": "^7.5.0"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -56,12 +54,13 @@
     "faker": "^4.1.0",
     "moment": "^2.24.0",
     "mysql2": "^2.0.1",
-    "node": "^13.3.0",
     "nodemon": "^2.0.1",
     "path": "^0.12.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "sequelize": "^5.21.2",
-    "styled-components": "^4.4.1"
+    "styled-components": "^4.4.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
