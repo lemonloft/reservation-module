@@ -252,7 +252,6 @@ class App extends React.Component {
           this.state.pricePerNight = Number(data[0].pricePerNight);
           this.state.cleaningFee = Number(data[0].cleaningFee);
           this.state.serviceFee = Number(data[0].serviceFee);
-          this.state.reviewCount = data[0].reviewCount;
           for (let element of data) {
             this.state.reservations.push({ startDate: element.startDate, endDate: element.endDate });
           }
@@ -268,7 +267,7 @@ class App extends React.Component {
               }
               rating /= data[0].length;
               let nrRating = (Math.ceil(rating * 100)) / 100;
-              this.setState({ rating: nrRating });
+              this.setState({ rating: nrRating, reviewCount: data[0].length });
             })
         })
         .catch(err => {
