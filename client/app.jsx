@@ -39,14 +39,14 @@ const GuestsContainerDiv = styled.div`
     .circleMinus {
       color: rgb(0, 132, 137, 0.5);
       cursor: ${props => {
-        if (props.adultCount === 1) {
-          return "default";
-        } else if (props.childrenCount === 0) {
-          return "default";
-        } else if (props.infantCount === 0) {
-          return "default";
-        }
-      }}
+    if (props.adultCount === 1) {
+      return "default";
+    } else if (props.childrenCount === 0) {
+      return "default";
+    } else if (props.infantCount === 0) {
+      return "default";
+    }
+  }}
     }
   }
   .dropbtn{
@@ -162,7 +162,7 @@ const PriceDiv = styled.div`
     float: right;
   }
   ${props => {
-    if(props.feeView === 'totalCost'){
+    if (props.feeView === 'totalCost') {
       return 'padding-bottom: 0px; border-bottom: none; font-weight: 550;'
     }
   }}
@@ -236,10 +236,12 @@ class App extends React.Component {
     if (!this.state.reservations.length) {
       let origin = 'http://13.52.106.225';
       let url = `${origin}/api/reservations`;
+      let pathname = '/1';
       if (window.location.pathname.length <= 1) {
         url += '/1';
       } else {
         url += window.location.pathname;
+        pathname = window.location.pathname;
       }
       fetch(url, {
         method: 'GET'
@@ -247,7 +249,6 @@ class App extends React.Component {
         .then(response => response.json())
         .then((data) => {
           this.state.description = data[0].description;
-          this.state.rating = Number(data[0].rating);
           this.state.pricePerNight = Number(data[0].pricePerNight);
           this.state.cleaningFee = Number(data[0].cleaningFee);
           this.state.serviceFee = Number(data[0].serviceFee);
@@ -256,6 +257,19 @@ class App extends React.Component {
             this.state.reservations.push({ startDate: element.startDate, endDate: element.endDate });
           }
           this.setState((state) => (state));
+          fetch('http://52.52.189.97/api/reviews' + pathname, {
+            method: 'GET'
+          })
+            .then(response => response.json())
+            .then((data) => {
+              let rating = 0;
+              for (let i = 0; i < data[0].length; i++) {
+                rating += data[0][i].rating;
+              }
+              rating /= data[0].length;
+              let nrRating = (Math.ceil(rating * 100)) / 100;
+              this.setState({ rating: nrRating });
+            })
         })
         .catch(err => {
           console.log('err: ', err)
@@ -428,7 +442,7 @@ class App extends React.Component {
           <GreyLinesPolygon points="12,0 24,12" />
         </Svg>
       );
-      if(this.state.view === 'guests'){
+      if (this.state.view === 'guests') {
         caret = (
           <Svg>
             <GreyLinesPolygon points="0,0 12,12" />
@@ -437,7 +451,7 @@ class App extends React.Component {
         )
       }
       let guestsText = 'guest';
-      if(this.state.totalGuests > 1) {
+      if (this.state.totalGuests > 1) {
         guestsText += 's';
       }
       return (
