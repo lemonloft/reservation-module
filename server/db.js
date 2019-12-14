@@ -26,7 +26,10 @@ const Loft = sequelize.define('lofts', {
     autoIncrement: true,
   },
   description: {
-    type: Sequelize.STRING(500),
+    type: Sequelize.STRING(255),
+  },
+  paragraph: {
+    type: Sequelize.STRING(511),
   },
   pricePerNight: {
     type: Sequelize.DECIMAL,

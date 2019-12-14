@@ -20,6 +20,7 @@ sequelize.sync({force: true}).then(() => {
     lodging.rating = (Math.ceil(Math.random() * (500 - 100) + 100)) / 100;
     lodging.url = `${adjective}${loftSynonym}${i}`;
     lodging.reviewCount = Math.ceil(Math.random() * (500 - 5) + 5);
+    lodging.paragraph = faker.lorem.paragraph();
     const reservations = reservationsGenerator(i);
     Loft.create(lodging)
       .then(() => {

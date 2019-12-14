@@ -3,10 +3,12 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const controller = require('./controller.js');
 const cors = require('cors');
+const compression = require('compression');
 
 const app = express();
 const port = 3001;
 
+app.use(compression());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
